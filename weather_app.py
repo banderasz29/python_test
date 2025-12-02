@@ -29,7 +29,7 @@ st.markdown(
 )
 
 # API key from secrets
-api_key = st.secrets["OPENWEATHERMAP"]["API_KEY"]
+api_key = st.secrets["openweathermap"]["api_key"]
 
 # SQLite setup
 conn = sqlite3.connect("weather_logs.db")
@@ -63,7 +63,7 @@ def get_forecast(city):
 
 # Sidebar input
 st.sidebar.title("Weather Settings")
-city = st.sidebar.text_input("Enter city name", "Budapest")
+city = st.sidebar.text_input("Enter city name", "Marrakesh")
 
 st.title("🌤 Weather Dashboard")
 
