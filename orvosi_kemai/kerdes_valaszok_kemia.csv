@@ -1,0 +1,60 @@
+1. Definiálja az izotópok fogalmát! 
+- Izotópok: az azonos rendszámú de különböző tömegszámú atomokat nevezzük izotópoknak.
+2. Adja meg, hogyan változik az elektronegativitás értéke a periódusos rendszerben az oszlopokon belül illetve a sorokon belül. Két választ adjon!
+- Az oszlopokon belül az elektronegativitás értéke csökken.
+- A sorokon belül az elektronegativitás értéke nő.  
+3. Rajzolja fel a H2O molekula szerkezeti képletét úgy, hogy az ábra tükrözze a molekula geometriáját! Jelölje a képleten a molekula polaritását is!   
+- A H2O molekula szerkezeti képlete:
+  
+      H
+      |
+  H - O
+      |
+  
+  - A molekula polaritása: A H2O molekula poláris, mivel az oxigén atom nagyobb elektronegativitással rendelkezik, mint a hidrogén atomok, így     a kötés dipólusmomentummal rendelkezik.
+4. Sorolja fel a másodlagos kémiai kötéseket növekvő erősség szerinti sorrendben!
+- Másodlagos kémiai kötések növekvő erősség szerinti sorrendben:
+  1. Van der Waals-erők
+  2. Dipólus-dipólus kölcsönhatások
+  3. Hidrogénkötések    
+5. Rajzoljon példát szerkezeti képletekkel intermolekuláris és intramolekuláris hidrogénkötésre!
+- Intermolekuláris hidrogénkötés példája:
+  
+  H2O ---- H2O
+     |         |
+     O         O
+     |         |
+     H         H    
+6. Adja meg azokat a tulajdonságokat, amelyek a kinetikus gázelmélet szerint az ideális gázokra jellemzőek!
+- Az ideális gázokra jellemző tulajdonságok a kinetikus gázelmélet szerint:
+  1. A gázmolekulák közötti kölcsönhatások elhanyagolhatók.
+  2. A gázmolekulák véletlenszerűen és egyenletesen mozognak.
+  3. A gázmolekulák ütközése rugalmas, azaz az ütközés előtt és után az összes kinetikus energia megmarad.
+  4. A gázmolekulák mérete elhanyagolható a gáz térfogatához képest.
+  5. A gáz nyomása a molekulák falnak való ütközéseiből ered.
+7. Írja fel az egyesített gáztörvényt! Adja meg az egyes jelölések jelentését is!
+- Az egyesített gáztörvény képlete: 
+  (P1 * V1) / T1 = (P2 * V2) / T2
+  
+  Ahol:
+  P1, P2 = a gáz nyomása az 1. és 2. állapotban
+  V1, V2 = a gáz térfogata az 1. és 2. állapotban
+  T1, T2 = a gáz hőmérséklete az 1. és 2. állapotban (Kelvinben)
+8. Írja fel az ideális gáztörvényt! Adja meg az egyes jelölések jelentését is!
+- Az ideális gáztörvény képlete:
+  PV = nRT
+  
+  Ahol:
+  P = a gáz nyomása
+  V = a gáz térfogata
+  n = a gáz anyagmennyisége (mólban)
+  R = az egyetemes gázállandó (8.314 J/(mol·K))
+  T = a gáz hőmérséklete (Kelvinben)
+9. Rajzoljon diagramot, amely két különböző hőmérsékleten ábrázolja egy ideális gáz molekuláinak sebesség-eloszlását!
+- A diagramon két görbét kell ábrázolni, amelyek a molekulák sebesség-eloszlását mutatják két különböző hőmérsékleten. Az alacsonyabb hőmérsékletű görbe alacsonyabb csúccsal és keskenyebb eloszlással rendelkezik, míg a magasabb hőmérsékletű görbe magasabb csúccsal és szélesebb eloszlással. Ez azt jelzi, hogy a magasabb hőmérsékleten több molekula rendelkezik nagyobb sebességgel.
+10. Írja fel azt az egyenletet, amely segítségével az abszolút hőmérsékleti skálán és a Celsius-skálán mért hőmérséklet-értékek egymásba átszámolhatók. Adja meg az egyes jelölések jelentését is!
+- Az abszolút hőmérsékleti skálán és a Celsius-skálán mért hőmérséklet-értékek egymásba átszámolhatók a következő egyenlettel:
+  T(K) = t(°C) + 273.15
+  Ahol:
+  T(K) = az abszolút hőmérséklet Kelvinben
+  t(°C) = a Celsius-skálán mért hőmérséklet
