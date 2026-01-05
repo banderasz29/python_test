@@ -7,25 +7,41 @@ from pathlib import Path
 
 import streamlit as st
 
-# Saját modul: a CSV beolvasó és kérdésválasztó függvények
+# Új beolvasó modul (CSV: questions/answers; szigorú kérdés 'szám.' + '!' a sor végén)
 from qa_utils_kemia import beolvas_csv_dict, valassz_kerdeseket
 
 # --- Konstansok / fájlok ---
-# A CSV az app.py mellett legyen; így biztosan megtaláljuk
 CSV_FAJL = Path(__file__).with_name("kerdes_valaszok_kemia.csv")
-KUSZOB = 10  # legalább 10 helyes -> SIKERES
+KERDES_SZAM_KOR = 10  # egy körben ennyi kérdés
+KUSZOB = 7  # legalább 7 helyes -> SIKERES
+
+# Képek mappája – a fájlnév a kérdés sorszáma: pl. "88.png"
+PIC_DIR = Path("/Users/i0287148/Documents/python_test/python_test/orvosi_kemai/pic")
 
 
-# --- Segédfüggvények: megjelenítés ---
+# --- Segédfüggvények: megjelenítés és hasznos eszközök ---
 def expand_answers(ans_list: list[str]) -> list[str]:
+    """
+    A beolvasott válaszok listáját opcionálisan tovább bontja:
+      - csak az EGY SOROS elemeket bontjuk VESSZŐ (',') és PONTOSVESSZŐ (';') szerint,
+      - a PERJELES ('/') alakokat (pl. 'kék/lila') NEM bontjuk,
+      - a TÖBBSOROS elemeket érintetlenül hagyjuk (ASCII rajzok megőrzése).
+    """
     out: list[str] = []
     for a in ans_list:
-        s = (a or "").strip()
-        if not s:
+        s = a or ""
+        if not s.strip():
             continue
-        # Csak ',' és ';' szerint bontunk; a '/' érintetlen marad
-        parts = [p.strip() for p in re.split(r"[;,]", s) if p.strip()]
-        out.extend(parts)
+        if "\n" in s:
+            # Többsoros tartalom: hagyjuk egyben
+            out.append(s)
+        else:
+            # Egy soros: ',' és ';' szerinti bontás (ha van)
+            if "," in s or ";" in s:
+                parts = [p.strip() for p in re.split(r"[;,]", s) if p.strip()]
+                out.extend(parts)
+            else:
+                out.append(s.strip())
 
     # Duplikátumok kiszűrése (case-insensitive)
     seen = set()
@@ -40,15 +56,61 @@ def expand_answers(ans_list: list[str]) -> list[str]:
 
 def answers_bulleted_md(ans_list: list[str]) -> str:
     """
-    Markdown bullet lista összeállítása az (csak ',' és ';' alapján szétbontott) válaszokból.
+    Markdown összeállítása:
+      - egy soros elemek: "- elem"
+      - többsoros elemek: "- első sor" + kódblokkba a további sorok (behúzások megmaradnak)
+    Példa megjelenítés:
+      - D-tejsav:
+
+        ```
+        COOH
+          |
+         H-C-OH
+          |
+         CH3
+        ```
     """
     items = expand_answers(ans_list)
-    return "\n".join(f"- {item}" for item in items)
+    lines: list[str] = []
+
+    for item in items:
+        if "\n" not in item:
+            # egy soros
+            lines.append(f"- {item}")
+        else:
+            raw_lines = item.splitlines()
+            # első nem üres sor bullet cím
+            idx = 0
+            while idx < len(raw_lines) and not raw_lines[idx].strip():
+                idx += 1
+            if idx >= len(raw_lines):
+                continue  # csak üres sorok
+            first = raw_lines[idx].strip()
+            rest = "\n".join(raw_lines[idx + 1 :])
+
+            lines.append(f"- {first}")
+            if rest.strip():
+                lines.append("")
+                lines.append("```")
+                lines.append(rest.rstrip())
+                lines.append("```")
+
+    return "\n".join(lines)
 
 
-# --- Streamlit alapbeállítás ---
-st.set_page_config(page_title="Orvosi kémia Kvíz", page_icon="🔬", layout="wide")
-st.title("🔬 Orvosi Kémia Minimum Követelmény Kvíz (önértékelős)")
+def extract_qnum(kerdes: str) -> str | None:
+    """
+    Sorszám kinyerése a kérdés elejéről: '^\d+\.'
+    Pl. '88. Rajzolja ... !' -> '88'
+    Ha nincs szám a kérdés elején, None.
+    """
+    m = re.match(r"^\s*(\d+)\.", kerdes)
+    return m.group(1) if m else None
+
+
+# --- Streamlit alapbeállítás (kémiai jelképpel) ---
+st.set_page_config(page_title="Orvosi kémia Kvíz", page_icon="🧪", layout="wide")
+st.title("🧪 Orvosi Kémia – Minimum Követelmény Kvíz (önértékelős)")
 
 
 # --- Adatbetöltés cache-el ---
@@ -73,7 +135,7 @@ if "osszegzes" not in st.session_state:
 
 # --- Callbackok ---
 def uj_kor():
-    st.session_state.kor_kerdesei = valassz_kerdeseket(qa, 10)
+    st.session_state.kor_kerdesei = valassz_kerdeseket(qa, KERDES_SZAM_KOR)
     st.session_state.show_answer = {k: False for k in st.session_state.kor_kerdesei}
     st.session_state.itel = {k: None for k in st.session_state.kor_kerdesei}
     st.session_state.osszegzes = None
@@ -94,18 +156,18 @@ def mutasd_valaszt(kerdes: str):
 c1, c2 = st.columns([1, 1])
 with c1:
     st.button(
-        "🧪 Új kör indítása (10 kérdés)",
+        f"🧪 Új kör indítása ({KERDES_SZAM_KOR} kérdés)",
         type="primary",
         use_container_width=True,
         on_click=uj_kor,
-        key="btn_new_round",  # egyedi kulcs
+        key="btn_new_round",
     )
 with c2:
     st.button(
         "♻️ Teljes reset",
         use_container_width=True,
         on_click=reset_minden,
-        key="btn_full_reset",  # egyedi kulcs
+        key="btn_full_reset",
     )
 
 st.divider()
@@ -113,7 +175,7 @@ st.divider()
 # --- Tartalom ---
 if not st.session_state.kor_kerdesei:
     st.info(
-        "Kezdéshez kattints az **Új kör indítása (10 kérdés)** gombra! "
+        f"Kezdéshez kattints az **Új kör indítása ({KERDES_SZAM_KOR} kérdés)** gombra! "
         "Minden kérdésnél előbb **megmutathatod a választ**, majd **önértékeled**, hogy helyes volt-e."
     )
 else:
@@ -143,7 +205,7 @@ else:
         with cols[0]:
             st.button(
                 "👀 Válasz megjelenítése",
-                key=f"btn_show_{i}",  # egyedi gombkulcs kérdésenként
+                key=f"btn_show_{i}",
                 on_click=mutasd_valaszt,
                 args=(kerdes,),
                 use_container_width=True,
@@ -152,8 +214,19 @@ else:
         with cols[1]:
             if st.session_state.show_answer.get(kerdes, False):
                 st.success("Elfogadható válasz(ok):")
-                # Bulletpontos megjelenítés (',', ';' mentén bontás; '/' NEM bontódik)
+                # Bullet + fenced code a többsoros válaszokhoz
                 st.markdown(answers_bulleted_md(qa.get(kerdes, [])))
+
+                # --- KÉP MEGJELENÍTÉSE, ha létezik: <PIC_DIR>/<sorszám>.png ---
+                qnum = extract_qnum(kerdes)
+                if qnum:
+                    img_path = PIC_DIR / f"{qnum}.png"
+                    if img_path.exists():
+                        st.image(
+                            str(img_path),
+                            caption=f"Megoldáshoz tartozó ábra (#{qnum})",
+                            use_container_width=True,  # ✅ frissítve: use_column_width helyett
+                        )
 
                 # Alapértelmezett önértékelés: HELYES
                 current = st.session_state.itel.get(kerdes)
@@ -194,12 +267,12 @@ else:
         sikeres = st.session_state.osszegzes["sikeres"]
         if sikeres:
             st.success(
-                f"✅ SIKERES TESZT — GRATULÁLOK ! {helyes_db} / {len(st.session_state.kor_kerdesei)} "
+                f"✅ SIKERES TESZT — GRATULÁLUNK! {helyes_db} / {len(st.session_state.kor_kerdesei)} "
                 f"(küszöb: {KUSZOB})"
             )
         else:
             st.error(
-                f"❌ SIKERTELEN TESZT — NO PROBLEM {helyes_db} / {len(st.session_state.kor_kerdesei)} "
+                f"❌ SIKERTELEN TESZT — {helyes_db} / {len(st.session_state.kor_kerdesei)} "
                 f"(legalább {KUSZOB} szükséges)"
             )
 
@@ -224,5 +297,5 @@ else:
             file_name="kviz_eredmeny_onertekeles.json",
             mime="application/json",
             use_container_width=True,
-            key="btn_download_json",  # egyedi kulcs
+            key="btn_download_json",
         )
