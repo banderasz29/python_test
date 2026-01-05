@@ -209,7 +209,7 @@ Miből épül fel az M-fázis promóciós faktor?, ciklinből és Cdk-ból (cik
 Milyen enzimaktivitásuk van a ciklin dependens kinázoknak?, szerin/treonin specifikus protein kináz
 Nevezze meg a mitózis 5 fő szakaszát? profázis, metafázis; anafázis; telofázis; citokinézis
 Nevezzen meg egy fehérjét amit az MPF foszforilál?, H1 hiszton; lamin; mikrotubulusokhoz kapcsolódó fehérjék
-Nevezze meg a mitotikus mikrotubulus-rendszer 4 fő komponensét?, -kinetochor; poláris; kromoszómális -asztrális mikrotubulusok
+Nevezze meg a mitotikus mikrotubulus-rendszer 4 fő komponensét?, kinetochor; poláris; kromoszómális asztrális mikrotubulusok
 Melyik mikrotubulus-típus felelős a mitózis során a kromatidák szétválasztásáért és a sejt ellentétes pólusaira mozgatásáért?, kinetochor mikrotubulusok
 Melyik mikrotubulus-típus felelős a mitózis során a sejt alakjának megnyúlásáért és a pólusok egymástól való távolodásáért?, poláris mikrotubulusok
 Nevezze meg a testvérkromatidokat összetartó fehérjekomplexeket?, kohezin-komplexek
@@ -231,8 +231,8 @@ Melyik enzim végzi a szuperhelikális DNS szerkezetének fellazítását a repl
 Melyik enzim végzi a templát DNS-láncok szétválasztását a replikáció során?, helikáz
 Mi a primáz funkciója?, RNS-primer szintézise a replikáció során
 Mi a proofreading?, a beépült nem-komplementer nukleotidok eltávolítása a replikáció közben
-Milyen enzimaktivitással rendelkezik a DNS-polimeráz III (2)?,- 5’ → 3’ elongációs - 3’ → 5’ exonukleáz
-Milyen enzimaktivitással rendelkezik a DNS-polimeráz I (3)?,- 5' → 3' elongációs - 5' → 3' exonukleáz, 3’ → 5’ exonukleáz
+Milyen enzimaktivitással rendelkezik a DNS-polimeráz III (2)?, 5’ → 3’ elongációs;  3’ → 5’ exonukleáz
+Milyen enzimaktivitással rendelkezik a DNS-polimeráz I (3)?, 5' → 3' elongációs ; 5' → 3' exonukleáz ; 3’ → 5’ exonukleáz
 Mihez szükséges 3' → 5' exonukleáz aktivitás a replikáció során?, proofreading
 Mihez szükséges 5' → 3' exonukleáz aktivitás a replikáció során?, primer lebontásához
 Melyik enzim kapcsolja össze az Okazaki-fragmentumokat?, DNS-ligáz
@@ -249,9 +249,9 @@ Milyen enzimaktivitásuk van az excinukleázoknak?, endonukleáz
 Melyik betegségben károsodott a nukleotid-excíziós repair?, xeroderma pigmentosum
 Melyik repair-mechanizmus felelős a nem komplementer bázispárosodású DNS-régiók kijavításáért?, mismatch-repair
 Melyik az a betegség melyben a mismatch-repair károsodott?, HNPCC (hereditaer non-polyposis colon carcinoma)
-Melyek a transzkripció fő lépései (3)?, -iniciáció - elongáció -termináció
+Melyek a transzkripció fő lépései (3)?, iniciáció; elongáció; termináció
 Mi a neve annak a DNS-szakasznak amelyen a transzkripció iniciációja történik?, promóter
-Mivel kezdődik és mivel végződik egy transzkripciós egység?, - promóterrel kezdődik -terminátorral végződik
+Mivel kezdődik és mivel végződik egy transzkripciós egység?, promóterrel kezdődik; terminátorral végződik
 Mi a neve a transzkripció azon szakaszának amikor foszfodiészterkötések jönnek létre?, elongáció
 Milyen irányú az RNS szintézise a képződő lánc szempontjából?, 5' → 3'
 Mi a neve a transzkripció során képződött érési folyamaton még át nem esett RNS-nek?, primér transzkriptum
@@ -259,7 +259,7 @@ Milyen két alkotórésze van a bakteriális RNS-polimeráz holoenzimnek az inic
 Melyik folyamatban játszik szerepet a bakteriális rho-faktor?, a transzkripció terminációjában
 Melyik folyamatban játszik szerepet a bakteriális szigma-faktor?, a transzkripció iniciációjában
 Nevezze meg azt a folyamatot melynek során a primer transzkr, RNS polimeráz I
-Milyen rRNS-k képződnek az emlős pre-rRNS-ből (3)?, - 18S - 28S  - 5.8S rRNS
+Milyen rRNS-k képződnek az emlős pre-rRNS-ből (3)?, 18S; 28S; 5.8S rRNS
 Melyik rRNS képződik extranukleolárisan?, 5S rRNS
 Hogyan nevezzük a 18S és 5.8S rRNS gének közötti DNS-szakaszt?, átírt spacer
 Melyik folyamatra jellemzőek az ún. karácsonyfa-képződmények?, eukariota rRNS szintézise
@@ -270,12 +270,12 @@ Mikor kapcsolódnak össze a riboszóma alegységek teljes riboszómává?, a tr
 Mi a neve azoknak a pre-mRNS szakaszoknak amelyek az érett mRNS-ből hiányoznak?, intronok
 Mi a neve azoknak a pre-mRNS szakaszoknak amelyek az érett mRNS-ben is jelen vannak?, exonok
 Mi a neve az intronokat a pre-mRNS-ből eltávolító folyamatnak?, splicing
-Milyen alkotórészekből áll a spliceoszóma (3)?, - pre-mRNS - snRNS-ek - fehérjék
-Milyen érési folyamatokon megy keresztül egy pre-mRNS (3)?, - cap-képződés - poliadeniláció - splicing
+Milyen alkotórészekből áll a spliceoszóma (3)?, pre-mRNS; snRNS-ek; fehérjék
+Milyen érési folyamatokon megy keresztül egy pre-mRNS (3)?, cap-képződés; poliadeniláció; splicing
 Melyik enzim szintetizálja az eukariota sejtekben a pre-mRNS-t?, RNS-polimeráz II
 Mi a mediátor komplex szerepe?, jelátviteli utakat kapcsol össze a transzkriptoszómával
 Mi a neve annak a folyamatnak amely az RNS-ben nukleotidokat változtat meg kapcsol hozzá vagy távolít el belőle mRNS-érés során?, RNS-editing
-Mi a szerepe a mRNS-nek és a tRNS-nek a transzláció során?, - mRNS: templát; - tRNS: adapter
+Mi a szerepe a mRNS-nek és a tRNS-nek a transzláció során?, mRNS: templát; tRNS: adapter
 Milyen molekulák vesznek részt az aminosav-aktivációban (3)?, aminosav; ATP; aminoacil-tRNS szintáz
 Mi keletkezik az aminosav-aktiváció során (2)?, aminoacil-AMP; pirofoszfát
 Nevezze meg a tRNS 3 nagy hurkához és a 3' végéhez kapcsolódó molekulákat?, riboszóma; mRNS; aminoacil-tRNS szintáz; aminosav
@@ -295,7 +295,7 @@ Mekkora a prokariota riboszóma alegységek valamint a teljes riboszóma szedime
 Mekkora az eukariota riboszóma alegységek valamint a teljes riboszóma szedimentációs állandója?, alegységek: 40S és 60S; teljes riboszóma: 80S
 Melyek az energiaigényes folyamatok a transzláció során (3)?, aminosav-aktiváció; aminoacil-tRNS kötődése; transzlokáció
 Mit jelent a konstitutív génexpresszió fogalma?, az adott gén állandóan azonos mértékben íródik át
-Nevezze meg a bakteriális operon elemeit (3)?, -promoter; -operátor; -strukturális gének
+Nevezze meg a bakteriális operon elemeit (3)?, promoter; operátor; strukturális gének
 Milyen típusú a bakteriális laktóz-operon?, indukálható
 Hogyan befolyásolja a glükóz jelenléte a táptalajban a baktériumok cAMP-tartalmát?, csökkenti azt
 Hogyan befolyásolja a glükóz jelenléte a táptalajban a baktériumok laktóz-operonjának aktivitását?, csökkenti
@@ -310,59 +310,59 @@ Hogyan befolyásolja a triptofán jelenléte a baktériumok triptofán-operonjá
 Mely anyagcsereút-típusok szabályozását végzik a represszálható operonok?, felépítő anyagcsereutakét
 Nevezzen meg egy cisz-hatású szabályozó elemet?, promóter; operátor; enhancer
 Mik a háztartást fenntartó (housekeeping) gének?, olyan gének melyek szövettípustól függetlenül mindenhol aktívak
-Mely szinteken szabályozható eukariotákban a génexpresszió? Nevezzen meg kettőt?, -transzkripció; -pre-mRNS érés; -RNS-transzport
-Nevezzen meg egy olyan epigenetikai mechanizmust amely részt vesz a génműködés szabályozásában?, -hiszton-acetiláció; -DNS-metiláció
-Nevezzen meg egy folyamatot mely a pre-mRNS érését szabályozza?, -alternatív splicing; -RNS-editing
+Mely szinteken szabályozható eukariotákban a génexpresszió? Nevezzen meg kettőt?, transzkripció; pre-mRNS érés; RNS-transzport
+Nevezzen meg egy olyan epigenetikai mechanizmust amely részt vesz a génműködés szabályozásában?, hiszton-acetiláció; DNS-metiláció
+Nevezzen meg egy folyamatot mely a pre-mRNS érését szabályozza?, alternatív splicing; RNS-editing
 Mit jelent a konstitutív splicing kifejezés?, az a folyamat melynek során egy pre-mRNS-ből csak egyféle mRNS képződik
 Melyik két fő úton zajlik eukariota sejtekben a fehérjék lebontása?, lizoszomális fehérjebontás; ubikvitin-proteaszóma rendszer
 Mi történik a sejtben a poliubiquitinált fehérjékkel?, lebontják őket a proteaszómák
-Melyik 2 domén jelenléte szükséges feltétlenül egy transzkripciós faktor működéséhez?, -DNS-kötő domén; -aktivációs domén
-Nevezzen meg 2 eukarióta transzkripciós faktor családot?, -hélix-turn-hélix fehérjék; -cinkujj fehérjék; -amfipatikus hélix fehérjék
-Nevezzen meg egy cinkujj fehérjét?, -TFIIIA; -szteroid receptorok; -WT-1 fehérje
+Melyik 2 domén jelenléte szükséges feltétlenül egy transzkripciós faktor működéséhez?, DNS-kötő domén; aktivációs domén
+Nevezzen meg 2 eukarióta transzkripciós faktor családot?, hélix-turn-hélix fehérjék; cinkujj fehérjék; amfipatikus hélix fehérjék
+Nevezzen meg egy cinkujj fehérjét?, TFIIIA; szteroid receptorok; WT-1 fehérje
 Mi okozza a testicularis feminisatiot?, az androgén receptorok hiánya
 Hol található a glukokortikoiddal nem kezelt célsejtekben a glukokortikoid receptor?, a citoplazmában
-Mely betegségcsaládok hátterében állhatnak transzkripciós faktor rendellenességek. nevezzen meg kettőt?, -fejlődési rendellenességek; endokrin kórképek; -daganatos megbetegedések
-Hogy hívjuk az endoplazmatikus retikulum membránjainak felszíneit?, -citoplazmatikus felszín; -exoplazmatikus felszín
-Mely anyagok szintéziséért felelős a sima illetve a durva felszínű endoplazmatikus retikulum (2)?, -durva felszínű endoplazmatikus retikulum: fehérjék; -sima felszínű endoplazmatikus retikulum: lipidek
-Mely fehérjék szintézise történik a durva felszínű endoplazmatikus retikulumon (5)?, -szekréciós fehérjék; -membránfehérjék; -lizoszómális enzimek; -az endoplazmatikus retikulum és a Golgi-apparátus fehérjéi
+Mely betegségcsaládok hátterében állhatnak transzkripciós faktor rendellenességek. nevezzen meg kettőt?, fejlődési rendellenességek; endokrin kórképek; daganatos megbetegedések
+Hogy hívjuk az endoplazmatikus retikulum membránjainak felszíneit?, citoplazmatikus felszín; exoplazmatikus felszín
+Mely anyagok szintéziséért felelős a sima illetve a durva felszínű endoplazmatikus retikulum (2)?, durva felszínű endoplazmatikus retikulum: fehérjék; sima felszínű endoplazmatikus retikulum: lipidek
+Mely fehérjék szintézise történik a durva felszínű endoplazmatikus retikulumon (5)?, szekréciós fehérjék; membránfehérjék; lizoszómális enzimek; az endoplazmatikus retikulum és a Golgi-apparátus fehérjéi
 Milyen típusú riboszómán kezdődik a fehérjék szintézise?, mindegyiké szabad riboszómán
 Mi határozza meg hogy egy adott fehérje szintézise a durva felszínű endoplazmatikus retikulumon történik?, a szignál szekvencia
 Milyen mechanizmussal jut a durva felszínű endoplazmatikus retikulum lumenébe az újonnan szintetizálódó fehérje?, kotranszlációs transzporttal
 Mi a fehérjeglikoziláció?, szénhidrát egységek kapcsolódása a fehérjelánchoz
-Nevezzen meg egy betegséget mely a durva felszínű endoplazmatikus retikulum chaperone-jainak hibás működésével függ össze?, -cystás fibrosis; -familiaris hypercholesterinaemia
-A szekréciónak milyen fajtái vannak (2)?, -folyamatos (konstitutív); -szabályozott (regulált)
-Írjon 2 példát folyamatos szekrécióra?, -mátrixfehérjék; -antitestek; -albumin szekréciója; -sejthártya alkotórészeinek pótlása
-Mely aminosavakhoz kapcsolódhat szénhidrát oldallánc; 2 példa?, aszparagin; szerin; -treonin; hidroxilizin
-Nevezzen meg 2 szénhidrátot mely a glikoproteinekben előfordul?, -glükóz; -mannóz; -N-acetil glükózamin
-Nevezze meg az endocitózis típusait (3)?, -fagocitózis; -pinocitózis; -receptor által közvetített endocitózis
+Nevezzen meg egy betegséget mely a durva felszínű endoplazmatikus retikulum chaperone-jainak hibás működésével függ össze?, cystás fibrosis; familiaris hypercholesterinaemia
+A szekréciónak milyen fajtái vannak (2)?, folyamatos (konstitutív); szabályozott (regulált)
+Írjon 2 példát folyamatos szekrécióra?, mátrixfehérjék; antitestek; albumin szekréciója; sejthártya alkotórészeinek pótlása
+Mely aminosavakhoz kapcsolódhat szénhidrát oldallánc; 2 példa?, aszparagin; szerin; treonin; hidroxilizin
+Nevezzen meg 2 szénhidrátot mely a glikoproteinekben előfordul?, glükóz; mannóz; N-acetil glükózamin
+Nevezze meg az endocitózis típusait (3)?, fagocitózis; pinocitózis; receptor által közvetített endocitózis
 Hogyan szállítódik a koleszterin a vérben?, LDL-partikulum formájában
 Milyen mechanizmussal veszik fel a sejtek az LDL-partikulumokat?, receptor-mediált endocitózissal
 Milyen betegséget okoz az LDL-receptorok hiánya?, familiaris hypercholesterinaemiát
-Nevezzen meg 3 fehérjét mely részt vesz a vezikuláris transzportban?, -ARF; -adaptin; -célzófehérjék; -Rab fehérjék; -chaperone fehérjék
-Nevezzen meg kettőt a sejtekben leggyakrabban képződő szabadgyökök közül?, -szuperoxid; -hidroxil szabadgyök
+Nevezzen meg 3 fehérjét mely részt vesz a vezikuláris transzportban?, ARF; adaptin; élzófehérjék; Rab fehérjék; chaperone fehérjék
+Nevezzen meg kettőt a sejtekben leggyakrabban képződő szabadgyökök közül?, szuperoxid; hidroxil szabadgyök
 Mely enzim hozza létre a szuperoxid aniont a fagocitózis során?, NADPH-oxidáz
-Milyen vegyületek képződnek az oxigénmolekula 1-2-3-4 elektronnal történő redukciója során?, -szuperoxid; -hidrogén-peroxid; -hidroxil szabadgyök; -víz
-Melyik enzim inaktiválja a szuperoxidot és melyik a hidrogén-peroxidot?, -szuperoxidot: szuperoxid-dizmutáz; -hidrogén-peroxidot: kataláz; -peroxidáz
+Milyen vegyületek képződnek az oxigénmolekula 1-2-3-4 elektronnal történő redukciója során?, szuperoxid; hidrogén-peroxid; hidroxil szabadgyök; víz
+Melyik enzim inaktiválja a szuperoxidot és melyik a hidrogén-peroxidot?, szuperoxidot: szuperoxid-dizmutáz; hidrogén-peroxidot: kataláz; peroxidáz
 Mi a neve annak a folyamatnak melynek során a membránok telítetlen zsírsavai szabadgyökök hatására degradálódnak?, lipid-peroxidáció
-Nevezzen meg 2 lizoszómális tárolási betegséget?, -Tay-Sachs kór; -I-sejt betegség; -Gaucher-kór; -Niemann-Pick kór
+Nevezzen meg 2 lizoszómális tárolási betegséget?, Tay-Sachs kór; I-sejt betegség; Gaucher-kór; Niemann-Pick kór
 Milyen enzimeket tartalmaznak a lizoszómák?, savanyú hidroláz enzimeket
 Hogy nevezik azt a folyamatot melynek során a lizoszómák sejtorganellumokat emésztenek meg?, autolízis (autofágia)
 Melyik szignál irányítja a lizoszómális enzimeket a lizoszómákba?, mannóz-6-foszfát
-Nevezze meg a sima felszínű endoplazmatikus retikulum három legfontosabb funkcióját?, -biotranszformáció; -lipidszintézis; -kalcium tárolása
+Nevezze meg a sima felszínű endoplazmatikus retikulum három legfontosabb funkcióját?, biotranszformáció; lipidszintézis; kalcium tárolása
 Milyen hatással van a fenobarbitál a máj citokróm P450 aktivitására?, indukálja azt
-Sorolja fel a biológiai oxidáció lépéseit és nevezze meg a helyet ahol végbemennek?, -glikolízis: citoszól; -citrátkör: mitokondrium mátrix; -terminális oxidáció: mitokondrium belső membránja
-Sorolja fel a mitokondriumok szerkezeti elemeit (4)?, -külső membrán; -intermembrán tér; -belső membrán; mátrix
+Sorolja fel a biológiai oxidáció lépéseit és nevezze meg a helyet ahol végbemennek?, glikolízis: citoszól; citrátkör: mitokondrium mátrix; terminális oxidáció: mitokondrium belső membránja
+Sorolja fel a mitokondriumok szerkezeti elemeit (4)?, külső membrán; intermembrán tér; belső membrán; mátrix
 Mi jellemző a mitokondrium membránok permeabilitására és miért?, -külső membrán: permeábilis a porin miatt; -belső membrán: impermeábilis a kardiolipin miatt
-Nevezze meg a mitokondrium belső membránjában található fehérjék 3 fő funkcionális kategóriáját?, -transzportfehérjék; -elektrontranszportlánc -fehérjéi; -ATP-szintáz
+Nevezze meg a mitokondrium belső membránjában található fehérjék 3 fő funkcionális kategóriáját?, transzportfehérjék; elektrontranszportlánc fehérjéi; ATP-szintáz
 Hogyan veszi fel a mitokondrium a piroszőlősavat?, H+/piruvát szimporterrel
 Mi a hajtóereje a mitokondriális ATP-szintézisnek?, elektrokémiai protongrádiens
-Hogyan nevezzük a mitokondriális ATP-szintáz alegységeit?, -FO; -F1
-Hol szintetizálódnak a mitokondriumban lévő riboszómák rRNS-ei és fehérjéi?, -rRNS-ek: mitokondrium mátrixában; -fehérjék: citoszól szabad riboszómáin
+Hogyan nevezzük a mitokondriális ATP-szintáz alegységeit?, FO; F1
+Hol szintetizálódnak a mitokondriumban lévő riboszómák rRNS-ei és fehérjéi?, rRNS-ek: mitokondrium mátrixában; fehérjék: citoszól szabad riboszómáin
 Hogyan jutnak be a mitokondriumba a fehérjék?, poszttranszlációs transzporttal
 Mi a chaperone-ok funkciója a fehérjék mitokondriumba történő transzportja során?, a fehérjeláncot kiterítik
 Hol nagyobb a pH: a mitokondriális mátrixban vagy az intermembrán térben?, a mitokondriális mátrixban
 Mi a mitokondriális ATP-szintáz FO komponensének funkciója?, protoncsatorna
-Nevezzen meg 3 kórképet melynek hátterében mitokondriális DNS-károsodás állhat?, -dementia; -cardiomyopathia; -opticus neuropathia; -glomerulopathia
+Nevezzen meg 3 kórképet melynek hátterében mitokondriális DNS-károsodás állhat?, dementia; cardiomyopathia; opticus neuropathia; glomerulopathia
 Egy sejt normál és mutációt hordozó mitokondriális DNS-molekulákat is tartalmaz. mi a jelenség neve?, heteroplazmia
 
 
