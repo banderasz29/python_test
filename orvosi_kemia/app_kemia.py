@@ -86,7 +86,7 @@ def find_question_images(qnum: str) -> list[Path]:
 
 
 st.set_page_config(page_title="Orvosi kémia Kvíz", page_icon="🧪", layout="wide")
-st.title("🧪 Orvosi Kémia – Minimum Követelmény Kvíz (önértékelős)")
+st.title("🧪 Orvosi Kémia – Minimum Követelmény Kvíz")
 
 
 @st.cache_data

@@ -155,9 +155,7 @@ def beolvas_csv_dict(filename: str) -> Dict[str, List[str]]:
         qa_fb = _parse_numbered_text_strict(text)
         if qa_fb:
             return qa_fb
-        raise ValueError(
-            "A CSV üresnek tűnik, és a számozott fallback sem talált kérdéseket."
-        )
+        raise ValueError("A CSV üresnek tűnik.")
 
     return qa
 
