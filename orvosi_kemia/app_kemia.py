@@ -1,18 +1,59 @@
 from __future__ import annotations
 import json
+import os
 import re
 from datetime import datetime
 from pathlib import Path
+
 import streamlit as st
 
 from qa_utils_kemia import beolvas_csv_dict, valassz_kerdeseket
 
-CSV_FAJL = Path(__file__).with_name("kerdes_valaszok_kemia.csv")
+# ─────────────────────────────────────────────────────────
+# Stabil útvonalkezelés és fallback-ek
+APP_DIR = Path(__file__).parent
+
+# ❶ Repo/Cloud: CSV az app mappájában
+CSV_REL = APP_DIR / "kerdes_valaszok_kemia.csv"
+
+
+# ❷ Lokális Mac abszolút útvonal (amit megadtál)
+CSV_ABS = Path(
+    "/Users/i0287148/Documents/python_test/python_test/orvosi_kemia/kerdes_valaszok_kemia.csv"
+)
+
+# ❸ Környezeti változóval felülírható
+CSV_ENV = os.environ.get("KEMIA_QA_CSV")
+
+
+def resolve_csv_path() -> Path:
+    candidates: list[Path] = []
+    if CSV_ENV:
+        candidates.append(Path(CSV_ENV))
+    candidates.append(CSV_REL)
+    candidates.append(CSV_ABS)
+    for p in candidates:
+        p = Path(p)
+        if p.exists():
+            return p
+    # Ha egyik jelölt sem létezik, visszaadjuk a relatívat, és a UI-ban jelezzük
+    return CSV_REL
+
+
+CSV_FAJL = resolve_csv_path()
+
+# Képek könyvtár: először környezeti változó, aztán app mappa, végül a lokális abszolút
+PIC_ENV = os.environ.get("KEMIA_PIC_DIR")
+PIC_REL = APP_DIR / "pic"
+PIC_ABS = Path("/Users/i0287148/Documents/python_test/python_test/orvosi_kemia/pic")
+PIC_DIR = Path(PIC_ENV) if PIC_ENV else (PIC_REL if PIC_REL.exists() else PIC_ABS)
+
 KERDES_SZAM_KOR = 10
 KUSZOB = 7
-PIC_DIR = Path("/Users/i0287148/Documents/python_test/python_test/orvosi_kemia/pic")
 
 
+# ─────────────────────────────────────────────────────────
+# Segédfüggvények
 def expand_answers(ans_list: list[str]) -> list[str]:
     out: list[str] = []
     for a in ans_list:
@@ -73,36 +114,94 @@ def extract_qnum(kerdes: str) -> str | None:
 def find_question_images(qnum: str) -> list[Path]:
     """
     Keresd meg a qnum-hoz tartozó képfájlokat a PIC_DIR-ben:
-      - <qnum>.png
-      - <qnum>_*.png (pl. 3_1.png, 3_2.png)
+      - <qnum>.png / .jpg
+      - <qnum>_*.png / .jpg (pl. 3_1.png, 3_2.jpg)
     """
     images: list[Path] = []
-    p_main = PIC_DIR / f"{qnum}.png"
-    if p_main.exists():
-        images.append(p_main)
-    extras = sorted(PIC_DIR.glob(f"{qnum}_*.png"), key=lambda p: p.name)
-    images.extend(extras)
+    # fő kép: png/jpg
+    for ext in (".png", ".jpg", ".jpeg"):
+        p_main = PIC_DIR / f"{qnum}{ext}"
+        if p_main.exists():
+            images.append(p_main)
+
+    # kiegészítő képek: png/jpg
+    extra_patterns = [f"{qnum}_*.png", f"{qnum}_*.jpg", f"{qnum}_*.jpeg"]
+    for pattern in extra_patterns:
+        images.extend(sorted(PIC_DIR.glob(pattern), key=lambda p: p.name))
     return images
 
 
+# ─────────────────────────────────────────────────────────
+# Streamlit UI
 st.set_page_config(page_title="Orvosi kémia Kvíz", page_icon="🧪", layout="wide")
-st.title("🧪 Orvosi Kémia – Minimum Követelmény Kvíz")
+st.title("🧪 Orvosi Kémia – Minimum Követelmény Kvíz (önértékelős)")
 
 
-@st.cache_data
-def betolt_qa(path: str | Path):
-    return beolvas_csv_dict(str(path))
+@st.cache_data(show_spinner=False)
+def betolt_qa(path: Path):
+    p = Path(path)
+    if not p.exists():
+        raise FileNotFoundError(f"Nem található a fájl: {p.resolve()}")
+    # A beolvasó str-t vár, átadjuk így
+    return beolvas_csv_dict(str(p))
 
 
-qa = betolt_qa(CSV_FAJL)
+# Sidebar: adatforrás / képek
+st.sidebar.header("Adatforrások")
+feltoltott = st.sidebar.file_uploader("Q&A CSV feltöltése", type=["csv"])
+st.sidebar.caption("CSV felülírja a beépített forrásokat erre a futásra.")
+st.sidebar.markdown(
+    f"**Aktív CSV**: `{CSV_FAJL}` — létezik: **{Path(CSV_FAJL).exists()}**\n\n"
+    f"**Kép-könyvtár**: `{PIC_DIR}` — létezik: **{Path(PIC_DIR).exists()}**"
+)
 
+# Debug expander (ideiglenes, hibaelhárításhoz)
+with st.sidebar.expander("Debug info", expanded=False):
+    st.code(
+        f"""CWD: {Path.cwd()}
+__file__: {__file__}
+APP_DIR: {APP_DIR}
+CSV_REL: {CSV_REL} (exists: {CSV_REL.exists()})
+CSV_ABS: {CSV_ABS} (exists: {CSV_ABS.exists()})
+CSV_ENV: {CSV_ENV}
+CSV_FAJL: {CSV_FAJL} (exists: {Path(CSV_FAJL).exists()})
+PIC_DIR: {PIC_DIR} (exists: {Path(PIC_DIR).exists()})
+Dir APP_DIR: {', '.join(p.name for p in APP_DIR.iterdir())}"""
+    )
+
+# CSV betöltés (feltöltés esetén az használatos)
+try:
+    if feltoltott is not None:
+        import pandas as pd
+
+        df = pd.read_csv(feltoltott)
+        qa = df.to_dict(orient="records")  # ha a belső logika mást vár, igazítsd
+        st.sidebar.success("Feltöltött CSV betöltve.")
+    else:
+        qa = betolt_qa(CSV_FAJL)
+        st.sidebar.success(f"Betöltve: {CSV_FAJL.name if CSV_FAJL.name else CSV_FAJL}")
+except FileNotFoundError as e:
+    st.sidebar.error(str(e))
+    st.sidebar.info(
+        "A CSV nem található sem a megadott útvonalon, sem az app mappájában.\n"
+        "• Tedd a 'kerdes_valaszok_kemia.csv' fájlt az app_kemia.py mellé, vagy\n"
+        "• Állítsd be a KEMIA_QA_CSV környezeti változót, vagy\n"
+        "• Tölts fel egy CSV-t a bal oldali panelen."
+    )
+    st.stop()
+
+# ─────────────────────────────────────────────────────────
+# Állapotkezelés
 if "kor_kerdesei" not in st.session_state:
     st.session_state.kor_kerdesei = []  # list[str]
+
 if "show_answer" not in st.session_state:
     st.session_state.show_answer = {}  # dict[str, bool]
+
 if "itel" not in st.session_state:
     # itel: kérdés -> "helyes" | "hibas"
     st.session_state.itel = {}  # dict[str, str | None]
+
 if "osszegzes" not in st.session_state:
     st.session_state.osszegzes = None  # dict | None
 
@@ -125,6 +224,8 @@ def mutasd_valaszt(kerdes: str):
     st.session_state.show_answer[kerdes] = True
 
 
+# ─────────────────────────────────────────────────────────
+# Fő UI
 c1, c2 = st.columns([1, 1])
 with c1:
     st.button(
@@ -162,6 +263,7 @@ else:
         for k in st.session_state.kor_kerdesei
         if st.session_state.itel.get(k) in ("helyes", "hibas")
     )
+
     st.caption(
         f"Önértékelt kérdések: {itelt_db} / {len(st.session_state.kor_kerdesei)} — "
         f"Helyesnek ítélt: {helyes_db}"
@@ -179,7 +281,6 @@ else:
                 args=(kerdes,),
                 use_container_width=True,
             )
-
         with cols[1]:
             if st.session_state.show_answer.get(kerdes, False):
                 st.success("Elfogadható válasz(ok):")
@@ -191,7 +292,8 @@ else:
                     imgs = find_question_images(qnum)
                     if imgs:
                         st.markdown(
-                            "<div style='height: 0.5rem'></div>", unsafe_allow_html=True
+                            "<div style='height: 0.5rem'></div>",
+                            unsafe_allow_html=True,
                         )
                         for idx_img, img_path in enumerate(imgs, start=1):
                             st.image(
@@ -206,7 +308,6 @@ else:
 
                 current = st.session_state.itel.get(kerdes)
                 radio_index = 0 if (current is None or current == "helyes") else 1
-
                 valasztas = st.radio(
                     "Önértékelés:",
                     options=["Helyesnek ítélem", "Nem volt helyes"],
@@ -214,7 +315,6 @@ else:
                     key=f"radio_{i}",
                     horizontal=True,
                 )
-
                 st.session_state.itel[kerdes] = (
                     "helyes" if valasztas == "Helyesnek ítélem" else "hibas"
                 )
@@ -263,6 +363,7 @@ else:
                 for k in st.session_state.kor_kerdesei
             ],
         }
+
         st.download_button(
             label="📥 Eredmények letöltése (JSON)",
             data=json.dumps(export, ensure_ascii=False, indent=2).encode("utf-8"),
