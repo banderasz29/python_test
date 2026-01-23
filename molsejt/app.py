@@ -6,23 +6,7 @@ import io
 import csv
 import streamlit as st
 
-<<<<<<< Updated upstream
-# Kérdésválogatás/CSV beolvasás – a korábbi modulból
-from qa_utils import valassz_forras_es_kerdesek
-
-# ─────────────────────────────────────────────────────────
-# ABSZOLÚT GYÖKÉR A CSV-KHEZ (a Te környezeted alapján)
-DATA_DIR = Path("/Users/i0287148/Documents/python_test/python_test/molsejt")
-
-# FIX paraméterek
-THRESHOLD = 12  # ennyi kérdés generálódik minden módban
-PASS_MIN = 9  # legalább ennyi helyes kell a sikerhez (12-ből 9)
-FAJL_1 = DATA_DIR / "kerdes_valaszok.csv"  # 1. félév forrás
-FAJL_2 = DATA_DIR / "kerdes_valaszok2.csv"  # 2. félév forrás
-SEED: int | None = None  # pl. 42 a reprodukálhatósághoz, különben None
-=======
-# A kérdésválogatás és CSV beolvasás a korábbi modulból
-# Győződj meg róla, hogy a qa_utils.py ugyanebben a mappában van.
+# Kérdésválogatás és CSV beolvasás – győződj meg róla, hogy qa_utils.py ugyanebben a mappában van.
 from qa_utils import valassz_forras_es_kerdesek
 
 # ─────────────────────────────────────────────────────────
@@ -35,7 +19,6 @@ PASS_MIN: int = 9  # legalább ennyi helyes kell a sikerhez (12-ből 9)
 FAJL_1: Path = DATA_DIR / "kerdes_valaszok.csv"  # 1. félév
 FAJL_2: Path = DATA_DIR / "kerdes_valaszok2.csv"  # 2. félév
 SEED: Optional[int] = None  # pl. 42 a reprodukálhatósághoz, különben None
->>>>>>> Stashed changes
 
 st.set_page_config(
     page_title="Molekuláris sejtbiológia – minimum kérdések teszt",
@@ -56,11 +39,7 @@ mod = st.sidebar.selectbox(
 )
 start = st.sidebar.button("🎯 Generálás / újrakeverés")
 
-<<<<<<< Updated upstream
-# Információs doboz – aktív elérési út és fájlok léte
-=======
 # Információ – aktív könyvtár és fájlok léte
->>>>>>> Stashed changes
 st.sidebar.caption(f"📂 Aktív adatkönyvtár: `{DATA_DIR}`")
 st.sidebar.write(
     f"- 1. félév: `{FAJL_1.name}` — **{'OK' if FAJL_1.exists() else 'HIÁNYZIK'}**\n"
@@ -68,28 +47,23 @@ st.sidebar.write(
 )
 
 # ─────────────────────────────────────────────────────────
-# Állapot
+# Állapot (nincs típusannotáció a session_state-en!)
 if "kerdesek" not in st.session_state:
-    st.session_state.kerdesek: List[str] = []
+    st.session_state.kerdesek = []  # List[str]
 if "qa" not in st.session_state:
-    st.session_state.qa: Dict[str, List[str]] = {}
+    st.session_state.qa = {}  # Dict[str, List[str]]
 if "show_answer" not in st.session_state:
-    st.session_state.show_answer: Dict[str, bool] = {}
+    st.session_state.show_answer = {}  # Dict[str, bool]
 if "itel" not in st.session_state:
-    st.session_state.itel: Dict[str, Optional[str]] = {}  # "helyes" | "hibas" | None
+    st.session_state.itel = {}  # Dict[str, Optional[str]]
 if "osszegzes" not in st.session_state:
-    st.session_state.osszegzes: Optional[Dict[str, object]] = None
+    st.session_state.osszegzes = None  # Optional[Dict[str, object]]
 
 
 # ─────────────────────────────────────────────────────────
 # Generálás
-<<<<<<< Updated upstream
-def generalj():
-    # Előzetes ellenőrzés, hogy egyértelmű hibát tudjunk jelezni
-=======
 def generalj() -> None:
     # Előzetes ellenőrzés – egyértelmű üzenet a hiányzó fájlokra
->>>>>>> Stashed changes
     missing = []
     if mod in ("1", "szigorlat") and not FAJL_1.exists():
         missing.append(str(FAJL_1))
@@ -102,6 +76,7 @@ def generalj() -> None:
             + "\n\nTedd a fájl(oka)t a megadott mappába, vagy módosítsd a kódban a DATA_DIR értékét."
         )
         st.stop()
+        return  # extra védelem, hogy ne fusson tovább
 
     try:
         kerdesek, qa = valassz_forras_es_kerdesek(
@@ -110,14 +85,17 @@ def generalj() -> None:
     except Exception as e:
         st.error(f"Hiba a kérdések előkészítése során: {e}")
         st.stop()
+        return
+    else:
+        # Csak sikeres beolvasás/mintavétel után állítsunk állapotot
+        st.session_state.kerdesek = kerdesek
+        st.session_state.qa = qa
+        st.session_state.show_answer = {k: False for k in kerdesek}
+        st.session_state.itel = {k: None for k in kerdesek}
+        st.session_state.osszegzes = None
 
-    st.session_state.kerdesek = kerdesek
-    st.session_state.qa = qa
-    st.session_state.show_answer = {k: False for k in kerdesek}
-    st.session_state.itel = {k: None for k in kerdesek}
-    st.session_state.osszegzes = None
 
-
+# Első betöltéskor, vagy gombnyomásra töltsünk
 if start or not st.session_state.kerdesek:
     generalj()
 
@@ -128,6 +106,13 @@ st.caption(
     f"Egyszerre látszik minden kérdés. Mód: **{{'1':'1. félév','2':'2. félév','szigorlat':'3. szigorlat (50–50%)'}}[mod]** • "
     f"Kérdések száma: **{THRESHOLD}** • Sikeresség feltétele: **legalább {PASS_MIN} helyes**."
 )
+
+# Ha valamiért még sincs kérdés (pl. stop után), álljunk meg szépen
+if not st.session_state.kerdesek:
+    st.info(
+        "Nincs betölthető kérdés. Ellenőrizd a CSV fájlokat, majd kattints a Generálás gombra."
+    )
+    st.stop()
 
 kerdesek = st.session_state.kerdesek
 qa = st.session_state.qa
@@ -238,6 +223,7 @@ if st.session_state.osszegzes is not None:
             f"❌ SIKERTELEN TESZT — {helyes}/{len(kerdesek)} (legalább {PASS_MIN} szükséges)"
         )
 
+    # Eredmény export (JSON)
     export = {
         "kor_id": "session",
         "kerdesek_szama": len(kerdesek),
