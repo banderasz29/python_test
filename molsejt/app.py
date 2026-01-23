@@ -1,253 +1,228 @@
 from __future__ import annotations
-
+from typing import List, Dict, Optional
 import json
-import re
-from datetime import datetime
-from pathlib import Path
-
+import io
+import csv
 import streamlit as st
 
-from qa_utils import beolvas_csv_dict, valassz_kerdeseket
+# A kérdésválogatás és CSV-parzolás a korábban készített modulból
+from qa_utils import valassz_forras_es_kerdesek
 
-# --- Konstansok / fájlok ---
-CSV_FAJL = Path(__file__).with_name("kerdes_valaszok.csv")
-KUSZOB = 9  # legalább 9 helyes -> SIKERES
+# ─────────────────────────────────────────────────────────
+# FIX paraméterek
+THRESHOLD = 12  # ennyi kérdés generálódik minden módban
+PASS_MIN = 9  # legalább ennyi helyes kell a sikerhez
+FAJL_1 = "kerdes_valaszok.csv"  # 1. félév forrás
+FAJL_2 = "kerdes_valaszok2.csv"  # 2. félév forrás
+SEED: int | None = None  # pl. 42 a reprodukálhatósághoz, különben None
 
+st.set_page_config(
+    page_title="Molekuláris sejtbiológia – minimum kérdések teszt",
+    page_icon="🧬",
+    layout="wide",
+)
 
-# --- Válaszok bontása és megjelenítése ---
-def split_line_bullets_multiline(text: str) -> list[str]:
-    if not text.strip():
-        return []
-    if not re.search(r"(?m)^\s*-\s+", text):
-        return []
-    lines = text.splitlines()
-    answers: list[str] = []
-    current: list[str] = []
-    in_bullet = False
-    for ln in lines:
-        m = re.match(r"^\s*-\s+(.*)", ln)
-        if m:
-            if current:
-                answers.append("\n".join(current).rstrip())
-                current = []
-            in_bullet = True
-            current.append(m.group(1))
-        else:
-            if in_bullet:
-                current.append(ln.rstrip())
-    if current:
-        answers.append("\n".join(current).rstrip())
-    return [a for a in answers if a.strip()]
+# Oldalsáv – csak vizsgatípus + generálás
+st.sidebar.header("Beállítás")
+mod = st.sidebar.selectbox(
+    "Vizsga típusa",
+    options=["1", "2", "szigorlat"],
+    format_func=lambda x: {
+        "1": "1. félév",
+        "2": "2. félév",
+        "szigorlat": "3. szigorlat (50–50%)",
+    }[x],
+)
+start = st.sidebar.button("🎯 Generálás / újrakeverés")
 
-
-def split_inline_hyphen_semicolon(text: str) -> list[str]:
-    s = (text or "").strip()
-    if not s:
-        return []
-    if re.search(r"\s-\s+", s):
-        parts = re.split(r"\s-\s+", s)
-        return [p.strip(" ;") for p in parts if p.strip(" ;")]
-    if ";" in s:
-        parts = s.split(";")
-        return [p.strip() for p in parts if p.strip()]
-    return [s]
-
-
-def expand_answers(ans_list: list[str]) -> list[str]:
-    out: list[str] = []
-    for a in ans_list:
-        s = a or ""
-        if not s.strip():
-            continue
-        bullets = split_line_bullets_multiline(s)
-        if bullets:
-            out.extend(bullets)
-            continue
-        out.extend(split_inline_hyphen_semicolon(s))
-    # duplikátum-szűrés (case-insensitive)
-    seen = set()
-    uniq = []
-    for p in out:
-        key = p.lower()
-        if key not in seen and p.strip():
-            seen.add(key)
-            uniq.append(p.strip())
-    return uniq
-
-
-def answers_bulleted_md(ans_list: list[str]) -> str:
-    items = expand_answers(ans_list)
-    # Többsoros elemeket is egyetlen bulletben hagyjuk (sortörések megmaradnak)
-    return "\n".join(f"- {item}" for item in items)
-
-
-# --- Streamlit alapbeállítás ---
-st.set_page_config(page_title="Miolsejt Kvíz", page_icon="🔬", layout="wide")
-st.title("🔬 Molsejt Minimum Követelmény Kvíz (önértékelős)")
-
-
-# --- Adatbetöltés cache-el ---
-@st.cache_data
-def betolt_qa(path: str | Path):
-    return beolvas_csv_dict(str(path))
-
-
-qa = betolt_qa(CSV_FAJL)
-
-# --- Session State inicializálás ---
-if "kor_kerdesei" not in st.session_state:
-    st.session_state.kor_kerdesei = []
+# ─────────────────────────────────────────────────────────
+# Állapot
+if "kerdesek" not in st.session_state:
+    st.session_state.kerdesek: List[str] = []
+if "qa" not in st.session_state:
+    st.session_state.qa: Dict[str, List[str]] = {}
 if "show_answer" not in st.session_state:
-    st.session_state.show_answer = {}
+    st.session_state.show_answer: Dict[str, bool] = {}
 if "itel" not in st.session_state:
-    st.session_state.itel = {}
+    st.session_state.itel: Dict[str, Optional[str]] = {}  # "helyes" | "hibas" | None
 if "osszegzes" not in st.session_state:
+    st.session_state.osszegzes: Optional[Dict[str, object]] = None
+
+
+# ─────────────────────────────────────────────────────────
+# Generálás
+def generalj():
+    try:
+        kerdesek, qa = valassz_forras_es_kerdesek(
+            mod=mod, n=THRESHOLD, fajl_1=FAJL_1, fajl_2=FAJL_2, seed=SEED
+        )
+    except Exception as e:
+        st.error(f"Hiba a kérdések előkészítése során: {e}")
+        st.stop()
+
+    st.session_state.kerdesek = kerdesek
+    st.session_state.qa = qa
+    st.session_state.show_answer = {k: False for k in kerdesek}
+    st.session_state.itel = {k: None for k in kerdesek}
     st.session_state.osszegzes = None
 
 
-# --- Callbackok ---
-def uj_kor():
-    st.session_state.kor_kerdesei = valassz_kerdeseket(qa, 12)
-    st.session_state.show_answer = {k: False for k in st.session_state.kor_kerdesei}
-    st.session_state.itel = {k: None for k in st.session_state.kor_kerdesei}
-    st.session_state.osszegzes = None
+if start or not st.session_state.kerdesek:
+    generalj()
 
+# ─────────────────────────────────────────────────────────
+# Fejléc és státusz
+st.title("🧬 Molekuláris sejtbiológia – minimum kérdések teszt")
+st.caption(
+    f"Egyszerre látszik minden kérdés. Mód: **{ {'1':'1. félév','2':'2. félév','szigorlat':'3. szigorlat (50–50%)'}[mod] }** • "
+    f"Kérdések száma: **{THRESHOLD}** • Sikeresség feltétele: **legalább {PASS_MIN} helyes**."
+)
 
-def reset_minden():
-    st.session_state.kor_kerdesei = []
-    st.session_state.show_answer = {}
-    st.session_state.itel = {}
-    st.session_state.osszegzes = None
+kerdesek = st.session_state.kerdesek
+qa = st.session_state.qa
+show_answer = st.session_state.show_answer
+itel = st.session_state.itel
 
+itelt_db = sum(1 for k in kerdesek if itel.get(k) in ("helyes", "hibas"))
+helyes_db = sum(1 for k in kerdesek if itel.get(k) == "helyes")
 
-def mutasd_valaszt(kerdes: str):
-    st.session_state.show_answer[kerdes] = True
-
-
-# --- Felső vezérlők ---
-c1, c2 = st.columns([1, 1])
+c1, c2, c3, c4 = st.columns([1, 1, 1, 2])
 with c1:
-    st.button(
-        "🧪 Új kör indítása (12 kérdés)",
-        type="primary",
-        use_container_width=True,
-        on_click=uj_kor,
-        key="btn_new_round",
-    )
+    st.metric("Kérdések száma", len(kerdesek))
 with c2:
+    st.metric("Önértékelt", f"{itelt_db}/{len(kerdesek)}")
+with c3:
+    st.metric("Helyesnek jelölt", helyes_db)
+with c4:
     st.button(
-        "♻️ Teljes reset",
+        "🔁 Újrakeverés (ugyanennyi kérdés)",
+        on_click=generalj,
         use_container_width=True,
-        on_click=reset_minden,
-        key="btn_full_reset",
     )
 
 st.divider()
 
-# --- Tartalom ---
-if not st.session_state.kor_kerdesei:
-    st.info(
-        "Kezdéshez kattints az **Új kör indítása (12 kérdés)** gombra! "
-        "Minden kérdésnél előbb **megmutathatod a választ**, majd **önértékeled**, hogy helyes volt-e."
-    )
-else:
-    st.subheader("Kérdések egy körben")
 
-    # Futó eredmény
-    helyes_db = sum(
-        1
-        for k in st.session_state.kor_kerdesei
-        if st.session_state.itel.get(k) == "helyes"
-    )
-    itelt_db = sum(
-        1
-        for k in st.session_state.kor_kerdesei
-        if st.session_state.itel.get(k) in ("helyes", "hibas")
-    )
-    st.caption(
-        f"Önértékelt kérdések: {itelt_db} / {len(st.session_state.kor_kerdesei)} — Helyesnek ítélt: {helyes_db}"
-    )
-
-    for i, kerdes in enumerate(st.session_state.kor_kerdesei, start=1):
-        st.markdown(f"**{i}.** {kerdes}")
-
-        cols = st.columns([1, 2])
-        with cols[0]:
-            st.button(
-                "👀 Válasz megjelenítése",
-                key=f"btn_show_{i}",
-                on_click=mutasd_valaszt,
-                args=(kerdes,),
-                use_container_width=True,
-            )
-
-        with cols[1]:
-            if st.session_state.show_answer.get(kerdes, False):
-                st.success("Elfogadható válasz(ok):")
-                st.markdown(answers_bulleted_md(qa.get(kerdes, [])))
-
-                current = st.session_state.itel.get(kerdes)
-                radio_index = 0 if (current is None or current == "helyes") else 1
-
-                valasztas = st.radio(
-                    "Önértékelés:",
-                    options=["Helyesnek ítélem", "Nem volt helyes"],
-                    index=radio_index,
-                    key=f"radio_{i}",
-                    horizontal=True,
-                )
-
-                st.session_state.itel[kerdes] = (
-                    "helyes" if valasztas == "Helyesnek ítélem" else "hibas"
-                )
-            else:
-                st.info(
-                    "Kattints a „Válasz megjelenítése” gombra, és utána értékeld a válaszodat."
-                )
-
-        st.write("---")
-
-    if st.button("🏁 Teszt kiértékelése", type="primary", key="btn_evaluate_test"):
-        helyes_db = sum(
-            1
-            for k in st.session_state.kor_kerdesei
-            if st.session_state.itel.get(k) == "helyes"
-        )
-        sikeres = helyes_db >= KUSZOB
-        st.session_state.osszegzes = {"helyes_db": helyes_db, "sikeres": sikeres}
-
-    if st.session_state.osszegzes is not None:
-        helyes_db = st.session_state.osszegzes["helyes_db"]
-        sikeres = st.session_state.osszegzes["sikeres"]
-        if sikeres:
-            st.success(
-                f"✅ SIKERES TESZT — {helyes_db} / {len(st.session_state.kor_kerdesei)} (küszöb: {KUSZOB})"
-            )
+# ─────────────────────────────────────────────────────────
+# Segédfüggvény a válaszok szépen formázott megjelenítéséhez
+def show_answers_markdown(ans_list: List[str]) -> None:
+    # több soros válaszokat és felsorolásokat is szépen mutatja
+    if not ans_list:
+        st.caption("(Nincs válasz rögzítve)")
+        return
+    for i, a in enumerate(ans_list, 1):
+        text = str(a).strip()
+        if "\n" in text:
+            st.markdown(f"**{i})**")
+            st.code(text)
         else:
-            st.error(
-                f"❌ SIKERTELEN TESZT — {helyes_db} / {len(st.session_state.kor_kerdesei)} (legalább {KUSZOB} szükséges)"
+            st.markdown(f"**{i})** {text}")
+
+
+# ─────────────────────────────────────────────────────────
+# Minden kérdés blokkban – „Válasz megjelenítése” + önértékelés
+for sorszam, k in enumerate(kerdesek, start=1):
+    # Kártya/doboz – jelöld színnel a jelenlegi értékelést
+    bg = (
+        "#eaffea"
+        if itel.get(k) == "helyes"
+        else ("#ffecec" if itel.get(k) == "hibas" else "#ffffff")
+    )
+    st.markdown(
+        f"""
+        <div style="border:1px solid #ddd;border-radius:8px;padding:16px;background:{bg}">
+          <div style="font-weight:600;">{sorszam}. kérdés</div>
+          <div style="margin-top:6px;">{k}</div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+    # Műveletgombok és válaszok
+    cA, cB = st.columns([1, 3])
+    with cA:
+        st.button(
+            "👀 Válasz megjelenítése",
+            key=f"btn_show_{sorszam}",
+            on_click=lambda kk=k: show_answer.__setitem__(kk, True),
+            use_container_width=True,
+        )
+    with cB:
+        if show_answer.get(k, False):
+            st.success("Elfogadható válasz(ok):")
+            show_answers_markdown(qa.get(k, []))
+            # Önértékelés rádióval
+            current = itel.get(k)
+            radio_idx = 0 if (current is None or current == "helyes") else 1
+            val = st.radio(
+                "Önértékelés:",
+                options=["Helyesnek ítélem", "Nem volt helyes"],
+                index=radio_idx,
+                key=f"radio_{sorszam}",
+                horizontal=True,
+            )
+            itel[k] = "helyes" if val == "Helyesnek ítélem" else "hibas"
+        else:
+            st.info(
+                "Kattints a „Válasz megjelenítése” gombra, és utána értékeld a válaszodat."
             )
 
-        export = {
-            "kor_id": datetime.utcnow().isoformat() + "Z",
-            "kerdesek_szama": len(st.session_state.kor_kerdesei),
-            "kuszob": KUSZOB,
-            "helyes_db": helyes_db,
-            "sikeres": sikeres,
-            "reszletek": [
-                {
-                    "kerdes": k,
-                    "elfogadhato_valaszok": qa.get(k, []),
-                    "itel": st.session_state.itel.get(k),
-                }
-                for k in st.session_state.kor_kerdesei
-            ],
-        }
-        st.download_button(
-            label="📥 Eredmények letöltése (JSON)",
-            data=json.dumps(export, ensure_ascii=False, indent=2).encode("utf-8"),
-            file_name="kviz_eredmeny_onertekeles.json",
-            mime="application/json",
-            use_container_width=True,
-            key="btn_download_json",
+    st.write("---")
+
+
+# ─────────────────────────────────────────────────────────
+# Kiértékelés (12-ből legalább 9-nek kell helyesnek lennie)
+def kiertet():
+    helyes = sum(1 for k in kerdesek if itel.get(k) == "helyes")
+    sikeres = helyes >= PASS_MIN
+    st.session_state.osszegzes = {"helyes_db": helyes, "sikeres": sikeres}
+
+
+st.button("🏁 Teszt kiértékelése", type="primary", on_click=kiertet)
+
+if st.session_state.osszegzes is not None:
+    helyes = st.session_state.osszegzes["helyes_db"]
+    sikeres = st.session_state.osszegzes["sikeres"]
+    if sikeres:
+        st.success(f"✅ SIKERES TESZT — {helyes}/{len(kerdesek)} (minimum: {PASS_MIN})")
+    else:
+        st.error(
+            f"❌ SIKERTELEN TESZT — {helyes}/{len(kerdesek)} (legalább {PASS_MIN} szükséges)"
         )
+
+    # Eredmény export (JSON)
+    export = {
+        "kor_id": "session",
+        "kerdesek_szama": len(kerdesek),
+        "minimum_helyes": PASS_MIN,
+        "helyes_db": helyes,
+        "sikeres": sikeres,
+        "reszletek": [
+            {"kerdes": k, "elfogadhato_valaszok": qa.get(k, []), "itel": itel.get(k)}
+            for k in kerdesek
+        ],
+    }
+    st.download_button(
+        label="📥 Eredmények letöltése (JSON)",
+        data=json.dumps(export, ensure_ascii=False, indent=2).encode("utf-8"),
+        file_name="molek_sejtbiologia_eredmeny.json",
+        mime="application/json",
+        use_container_width=True,
+    )
+
+# CSV export (táblázathoz)
+buf = io.StringIO()
+w = csv.writer(buf)
+w.writerow(["index", "question", "mark", "answers"])
+for i, kk in enumerate(kerdesek, 1):
+    mark = itel.get(kk)
+    mark_str = "" if mark is None else ("correct" if mark == "helyes" else "wrong")
+    joined = " | ".join(str(a).replace("\n", " ") for a in qa.get(kk, []))
+    w.writerow([i, kk, mark_str, joined])
+st.download_button(
+    label="⬇️ Eredmények letöltése (CSV)",
+    data=buf.getvalue(),
+    file_name="molek_sejtbiologia_eredmeny.csv",
+    mime="text/csv",
+    use_container_width=True,
+)
