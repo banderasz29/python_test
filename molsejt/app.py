@@ -1,19 +1,23 @@
 from __future__ import annotations
 from typing import List, Dict, Optional
+from pathlib import Path
 import json
 import io
 import csv
 import streamlit as st
 
-# A kérdésválogatás és CSV-parzolás a korábban készített modulból
+# Kérdésválogatás/CSV beolvasás – a korábbi modulból
 from qa_utils import valassz_forras_es_kerdesek
 
 # ─────────────────────────────────────────────────────────
+# ABSZOLÚT GYÖKÉR A CSV-KHEZ (a Te környezeted alapján)
+DATA_DIR = Path("/Users/i0287148/Documents/python_test/python_test/molsejt")
+
 # FIX paraméterek
 THRESHOLD = 12  # ennyi kérdés generálódik minden módban
-PASS_MIN = 9  # legalább ennyi helyes kell a sikerhez
-FAJL_1 = "kerdes_valaszok.csv"  # 1. félév forrás
-FAJL_2 = "kerdes_valaszok2.csv"  # 2. félév forrás
+PASS_MIN = 9  # legalább ennyi helyes kell a sikerhez (12-ből 9)
+FAJL_1 = DATA_DIR / "kerdes_valaszok.csv"  # 1. félév forrás
+FAJL_2 = DATA_DIR / "kerdes_valaszok2.csv"  # 2. félév forrás
 SEED: int | None = None  # pl. 42 a reprodukálhatósághoz, különben None
 
 st.set_page_config(
@@ -35,6 +39,13 @@ mod = st.sidebar.selectbox(
 )
 start = st.sidebar.button("🎯 Generálás / újrakeverés")
 
+# Információs doboz – aktív elérési út és fájlok léte
+st.sidebar.caption(f"📂 Aktív adatkönyvtár: `{DATA_DIR}`")
+st.sidebar.write(
+    f"- 1. félév: `{FAJL_1.name}` — **{'OK' if FAJL_1.exists() else 'HIÁNYZIK'}**\n"
+    f"- 2. félév: `{FAJL_2.name}` — **{'OK' if FAJL_2.exists() else 'HIÁNYZIK'}**"
+)
+
 # ─────────────────────────────────────────────────────────
 # Állapot
 if "kerdesek" not in st.session_state:
@@ -52,9 +63,23 @@ if "osszegzes" not in st.session_state:
 # ─────────────────────────────────────────────────────────
 # Generálás
 def generalj():
+    # Előzetes ellenőrzés, hogy egyértelmű hibát tudjunk jelezni
+    missing = []
+    if mod in ("1", "szigorlat") and not FAJL_1.exists():
+        missing.append(str(FAJL_1))
+    if mod in ("2", "szigorlat") and not FAJL_2.exists():
+        missing.append(str(FAJL_2))
+    if missing:
+        st.error(
+            "Hiányzó CSV fájl(ok):\n\n- "
+            + "\n- ".join(missing)
+            + "\n\nTedd a fájl(oka)t a megadott mappába, vagy módosítsd a kódban a DATA_DIR értékét."
+        )
+        st.stop()
+
     try:
         kerdesek, qa = valassz_forras_es_kerdesek(
-            mod=mod, n=THRESHOLD, fajl_1=FAJL_1, fajl_2=FAJL_2, seed=SEED
+            mod=mod, n=THRESHOLD, fajl_1=str(FAJL_1), fajl_2=str(FAJL_2), seed=SEED
         )
     except Exception as e:
         st.error(f"Hiba a kérdések előkészítése során: {e}")
@@ -106,7 +131,6 @@ st.divider()
 # ─────────────────────────────────────────────────────────
 # Segédfüggvény a válaszok szépen formázott megjelenítéséhez
 def show_answers_markdown(ans_list: List[str]) -> None:
-    # több soros válaszokat és felsorolásokat is szépen mutatja
     if not ans_list:
         st.caption("(Nincs válasz rögzítve)")
         return
@@ -122,7 +146,6 @@ def show_answers_markdown(ans_list: List[str]) -> None:
 # ─────────────────────────────────────────────────────────
 # Minden kérdés blokkban – „Válasz megjelenítése” + önértékelés
 for sorszam, k in enumerate(kerdesek, start=1):
-    # Kártya/doboz – jelöld színnel a jelenlegi értékelést
     bg = (
         "#eaffea"
         if itel.get(k) == "helyes"
@@ -138,7 +161,6 @@ for sorszam, k in enumerate(kerdesek, start=1):
         unsafe_allow_html=True,
     )
 
-    # Műveletgombok és válaszok
     cA, cB = st.columns([1, 3])
     with cA:
         st.button(
@@ -151,7 +173,7 @@ for sorszam, k in enumerate(kerdesek, start=1):
         if show_answer.get(k, False):
             st.success("Elfogadható válasz(ok):")
             show_answers_markdown(qa.get(k, []))
-            # Önértékelés rádióval
+
             current = itel.get(k)
             radio_idx = 0 if (current is None or current == "helyes") else 1
             val = st.radio(
@@ -190,7 +212,6 @@ if st.session_state.osszegzes is not None:
             f"❌ SIKERTELEN TESZT — {helyes}/{len(kerdesek)} (legalább {PASS_MIN} szükséges)"
         )
 
-    # Eredmény export (JSON)
     export = {
         "kor_id": "session",
         "kerdesek_szama": len(kerdesek),
@@ -210,7 +231,7 @@ if st.session_state.osszegzes is not None:
         use_container_width=True,
     )
 
-# CSV export (táblázathoz)
+# CSV export
 buf = io.StringIO()
 w = csv.writer(buf)
 w.writerow(["index", "question", "mark", "answers"])
