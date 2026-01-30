@@ -24,15 +24,98 @@ from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 
 # ─────────────────────────────────────────────────────────
-# Alapmappák
-APP_DIR: Path = Path(__file__).parent.resolve()
-FILE_SUBJECTS: Path = APP_DIR / "subject.csv"
-FILE_ELM: Path = APP_DIR / "elmeleti_kerdes_valaszok.csv"
-PIC_A_DIR: Path = APP_DIR / "pic_answers"
+# Alapmappák + robusztus útvonalkeresés (CSV-k a biofizika/app mappában)
+APP_DIR: Path = Path(__file__).resolve().parent  # a biofizika/ app mappa
+
+
+def _resolve_file(filename: str, env_var: Optional[str] = None) -> Path:
+    """
+    Robusztus fájlkeresés:
+    1) környezeti változó (ha megadva)
+    2) app mappa (APP_DIR)
+    3) current working dir (Path.cwd())
+    4) app szülője (APP_DIR.parent)
+    5) app 'data/' almappája (APP_DIR / 'data')
+    6) CWD 'biofizika/' almappája (Path.cwd() / 'biofizika')
+    Első találatot adja vissza; ha semmi nincs, APP_DIR/filename-re esik vissza.
+    """
+    tried: list[Path] = []
+
+    # 1) környezeti változó
+    if env_var:
+        p_env = os.getenv(env_var)
+        if p_env:
+            p = Path(p_env).expanduser().resolve()
+            tried.append(p)
+            if p.exists():
+                return p
+
+    # 2–6) kandidátok sorban
+    candidates = [
+        APP_DIR / filename,
+        Path.cwd() / filename,
+        APP_DIR.parent / filename,
+        APP_DIR / "data" / filename,
+        Path.cwd() / "biofizika" / filename,
+    ]
+
+    for p in candidates:
+        tried.append(p)
+        if p.exists():
+            return p
+
+    # nincs találat → barátságos üzenet + fallback az APP_DIR-re
+    st.warning(
+        "Nem találom a fájlt: "
+        f"'{filename}'. Próbált útvonalak:\n" + "\n".join(str(x) for x in tried)
+    )
+    return APP_DIR / filename
+
+
+def _resolve_dir(dirname: str) -> Path:
+    """
+    Robusztus könyvtár-keresés képekhez:
+    1) APP_DIR/dirname
+    2) Path.cwd()/dirname
+    3) APP_DIR.parent/dirname
+    Ha egyik sem létezik, az APP_DIR/dirname-et adja vissza (létrehozás nélkül).
+    """
+    candidates = [
+        APP_DIR / dirname,
+        Path.cwd() / dirname,
+        APP_DIR.parent / dirname,
+    ]
+    for p in candidates:
+        if p.exists() and p.is_dir():
+            return p
+    return APP_DIR / dirname
+
+
+# CSV-k: maradnak a biofizika/app mappában
+FILE_SUBJECTS: Path = _resolve_file("subject.csv", env_var="SUBJECT_CSV_PATH")
+FILE_ELM: Path = _resolve_file(
+    "elmeleti_kerdes_valaszok.csv", env_var="QUESTIONS_CSV_PATH"
+)
+# Képek könyvtára (válasz-illusztrációk)
+PIC_A_DIR: Path = _resolve_dir("pic_answers")
 
 PAGE_TITLE = "Biofizika – önértékelő teszt"
 PAGE_ICON = "⚛️"
 st.set_page_config(page_title=PAGE_TITLE, page_icon=PAGE_ICON, layout="wide")
+
+# Opcionális: útvonal debug kijelzés (oldalsávban kapcsolható)
+_show_paths = st.sidebar.checkbox("🔎 CSV/útvonal debug", value=False)
+if _show_paths:
+    from textwrap import indent
+
+    info = (
+        f"APP_DIR: {APP_DIR}\n"
+        f"CWD:     {Path.cwd()}\n"
+        f"subject.csv: {FILE_SUBJECTS}\n"
+        f"elmeleti_kerdes_valaszok.csv: {FILE_ELM}\n"
+        f"pic_answers dir: {PIC_A_DIR}\n"
+    )
+    st.info("Útvonalak:\n" + indent(info, "  "))
 
 
 # ─────────────────────────────────────────────────────────
@@ -102,9 +185,9 @@ def load_questions(
 ) -> Tuple[List[str], Dict[str, List[str]], Dict[str, str]]:
     """
     Visszaad:
-      questions : lista a megjelenítendő kérdésekből (szűrve témára)
-      answers_map : { kérdés: [válaszok] }
-      qid_map : { kérdés: qid ('x.xx') }
+    questions : lista a megjelenítendő kérdésekből (szűrve témára)
+    answers_map : { kérdés: [válaszok] }
+    qid_map : { kérdés: qid ('x.xx') }
     """
     dialect = detect_dialect(path)
     with open(path, "r", encoding="utf-8-sig") as f:
@@ -112,7 +195,6 @@ def load_questions(
         rows = list(reader)
     if not rows:
         return [], {}, {}
-
     q_col = first_existing(rows[0], "question", "kérdés", "kerdes", "q")
     a_col = first_existing(rows[0], "answer", "válasz", "valasz", "a")
     if not q_col or not a_col:
@@ -120,11 +202,9 @@ def load_questions(
             "Az elmeleti_kerdes_valaszok.csv-ben hiányzik a 'question' és/vagy 'answer' oszlop."
         )
         st.stop()
-
     qa_map: Dict[str, List[str]] = {}
     qid_map: Dict[str, str] = {}
     question_list: List[str] = []
-
     for r in rows:
         q = (r.get(q_col, "") or "").strip()
         a_raw = r.get(a_col, "") or ""
@@ -206,11 +286,9 @@ def _rl_img_scaled(path: Path, max_width: float) -> Optional[RLImage]:
 
 # ─────────────────────────────────────────────────────────
 # KLASSZIKUS FLOW + felső magassági korlát
-#  - képek teljes hasznos szélességre skálázva (_rl_img_scaled)
-#  - nincs KeepInFrame, nincs automatikus oldaltörés
-#  - HA túl magas lenne a kép: lekorlátozzuk egy felső határra (hasznos oldal-magasság X%-a)
-
-
+# - képek teljes hasznos szélességre skálázva (_rl_img_scaled)
+# - nincs KeepInFrame, nincs automatikus oldaltörés
+# - HA túl magas lenne a kép: lekorlátozzuk egy felső határra (hasznos oldal-magasság X%-a)
 def build_pdf(
     theme_label: str,
     theme_number: str,
@@ -237,7 +315,6 @@ def build_pdf(
     width, height = A4
     usable_w = width - 2 * MARG
     usable_h = height - 2 * MARG
-
     # felső magassági korlát: a hasznos oldal magasságának 70%-a
     MAX_IMG_H_FRAC = 0.70
     max_img_h = usable_h * MAX_IMG_H_FRAC
@@ -281,7 +358,6 @@ def build_pdf(
     )
 
     story: List = []
-
     # Fejléc (cím + meta)
     now = datetime.now().strftime("%Y.%m.%d %H:%M")
     story.append(Paragraph(f"{PAGE_TITLE}", style_title))
@@ -294,10 +370,8 @@ def build_pdf(
     # Kérdések – fejlécek és "Elfogadható válasz(ok)" nélkül
     for idx, q in enumerate(questions, start=1):
         qid = qid_map.get(q, "")
-
         # Kérdés szövege (FÉLKÖVÉR)
         story.append(Paragraph(q.replace("\n", "<br/>"), style_q))
-
         # Válaszok – sorkizárt bekezdések
         ans_list = qa_map.get(q, [])
         if ans_list:
@@ -306,7 +380,6 @@ def build_pdf(
                 story.append(Paragraph(f"{safe_a}", style_ans))
         else:
             story.append(Paragraph("(Nincs válasz rögzítve)", style_ans))
-
         # Képek a válaszhoz — KLASSZIKUS FLOW (teljes szélesség + felső magassági korlát)
         imgs = find_answer_images(qid) if qid else []
         if imgs:
@@ -320,8 +393,7 @@ def build_pdf(
                         rlimg.drawWidth *= scale
                         rlimg.drawHeight *= scale
                     story.append(rlimg)
-                    story.append(Spacer(1, 6))
-
+            story.append(Spacer(1, 6))
         # blokk-záró térköz
         story.append(Spacer(1, 10))
 
@@ -348,7 +420,6 @@ def build_pdf_all_themes(subjects: List[str], font_reg: str, font_bold: str) -> 
     width, height = A4
     usable_w = width - 2 * MARG
     usable_h = height - 2 * MARG
-
     # felső magassági korlát: a hasznos oldal magasságának 50%-a
     MAX_IMG_H_FRAC = 0.50
     max_img_h = usable_h * MAX_IMG_H_FRAC
@@ -398,7 +469,6 @@ def build_pdf_all_themes(subjects: List[str], font_reg: str, font_bold: str) -> 
 
     story: List = []
     now = datetime.now().strftime("%Y.%m.%d %H:%M")
-
     # Címlap/fejléc
     story.append(Paragraph(f"{PAGE_TITLE}", style_title))
     story.append(Paragraph(f"Összes téma kinyomtatva", style_meta))
@@ -412,7 +482,6 @@ def build_pdf_all_themes(subjects: List[str], font_reg: str, font_bold: str) -> 
             # ha nem nyerhető ki szám, kihagyjuk
             continue
         theme_number = m.group(1)
-
         # Téma-fejléc (meghagyjuk, mert ezt nem kérted eltávolítani)
         story.append(Paragraph(f"{subj}", style_h1))
         story.append(Spacer(1, 4))
@@ -427,10 +496,8 @@ def build_pdf_all_themes(subjects: List[str], font_reg: str, font_bold: str) -> 
 
         for q in questions:
             qid = qid_map.get(q, "")
-
             # Kérdés (FÉLKÖVÉR)
             story.append(Paragraph(q.replace("\n", "<br/>"), style_q))
-
             # Válaszok – sorkizárt bekezdések
             ans_list = qa_map.get(q, [])
             if ans_list:
@@ -439,7 +506,6 @@ def build_pdf_all_themes(subjects: List[str], font_reg: str, font_bold: str) -> 
                     story.append(Paragraph(f"{safe_a}", style_ans))
             else:
                 story.append(Paragraph("(Nincs válasz rögzítve)", style_ans))
-
             # Képek — KLASSZIKUS FLOW + felső magassági korlát
             imgs = find_answer_images(qid) if qid else []
             if imgs:
@@ -452,7 +518,7 @@ def build_pdf_all_themes(subjects: List[str], font_reg: str, font_bold: str) -> 
                             rlimg.drawWidth *= scale
                             rlimg.drawHeight *= scale
                         story.append(rlimg)
-                        story.append(Spacer(1, 6))
+                story.append(Spacer(1, 6))
 
         # témák között oldaltörés (utolsó után nem kötelező)
         if si < len(subjects):
@@ -532,18 +598,15 @@ for idx, q in enumerate(questions, start=1):
         """,
         unsafe_allow_html=True,
     )
-
     cA, cB = st.columns([1, 3])
     with cA:
         if st.button("👀 Válasz megjelenítése", key=f"show_{idx}"):
             st.session_state.show_answer[q] = True
-
     with cB:
         if st.session_state.show_answer[q]:
             st.success("Megoldás(ok):")
             for i, ans in enumerate(qa_map[q], 1):
                 st.markdown(f"**{i})** {ans}")
-
             # válaszképek (csak akkor, ha van qid)
             qid = qid_map.get(q)
             if qid:
@@ -552,7 +615,6 @@ for idx, q in enumerate(questions, start=1):
                     st.info("Megoldáshoz tartozó kép(ek):")
                     for img in imgs:
                         st.image(str(img), use_container_width=True)
-
         # önértékelés
         val = st.radio(
             "Önértékelés:",
@@ -562,7 +624,6 @@ for idx, q in enumerate(questions, start=1):
             horizontal=True,
         )
         st.session_state.mark[q] = "helyes" if val == "Helyesnek ítélem" else "hibas"
-
     st.write("---")
 
 
@@ -584,7 +645,7 @@ if not unicode_ok:
     st.warning(
         "A PDF‑hez nem találtam DejaVu Sans TTF‑et az alkalmazás mappájában. "
         "Helyezd el a 'DejaVuSans.ttf' és opcionálisan a 'DejaVuSans-Bold.ttf' fájlokat, "
-        "különben előfordulhat, hogy az ű/ő/í karakterek nem jelennek meg helyesen a PDF-ben."
+        "különben előfordulhat, hogy az ű/ő/í karakterek nem jelennek meg helyesen a PDF‑ben."
     )
 
 # PDF generálás gomb – AKTUÁLIS TÉMA (fejléc nélkül, sorkizárt megoldások)
