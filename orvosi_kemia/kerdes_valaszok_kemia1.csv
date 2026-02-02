@@ -1,10 +1,17 @@
 question, answer
 1.01. Definiálja az izotópok fogalmát!, Azonos protonszámú de eltérő neutronszámú atomok halmaza; Elnevezésük a periódusos rendszerben elfoglalt azonos helyükből származik; a természetben előforduló izotópok aránya az elemre jellemző adat.
 1.02. Adja meg  hogyan változik az elektronegativitás értéke a periódusos rendszerben az oszlopokon belül illetve a sorokon belül (Két választ adjon)!, Az elektronegativitás értéke periódikusan változik egyes perióduson (‘sorokban’) nő; míg a főcsoportokban (oszlopokban) csökken.
+<<<<<<< Updated upstream
 1.03. Rajzolja fel a H2O molekula szerkezeti képletét úgy  hogy az ábra tükrözze a molekula geometriáját. Jelölje a képleten a molekula polaritását is! , A víz molekulája V-alakú (szögben hajlított) mert az oxigén atomhoz két hidrogén kapcsolódik és két nemkötő elektronpár van rajta.; A kötési szög kb. 104,5°, ami a tetraéderes elrendezés torzult változata.; Az oxigén elektronegativitása miatt a molekula poláris, az oxigén részlegesen negatív (δ⁻), a hidrogének részlegesen pozitívak (δ⁺).; Az oxigén felé mutató nyíl a dipólus irányát jelzi: δ⁻ az O-n, δ⁺ a H-ken.
 1.04. Sorolja fel a másodlagos kémiai kötéseket növekvő erősség szerinti sorrendben!, London-féle diszperziós kölcsönhatás (1-10 kJ/mol) ; dipólus-dipólus kölcsönhatás (3-4 kJ/mol); hidrogén-kötés (10-40 kJ/mol)
 1.05. Rajzoljon példát szerkezeti képletekkel intermolekuláris és intramolekuláris hidrogénkötésre! ,
 1.06. Adja meg azokat a tulajdonságokat  amelyek a kinetikus gázelmélet szerint az ideális gázokra jellemzőek! ,A részecskék egymástól távol helyezkednek el gyors rendezetlen mozgást végeznek.; A részecskék saját térfogata elhanyagolgató a rendszer (gáz) teljes térfogatához képest.; A részecskék között semmilyen kölcsönhatás nem áll fenn.; A részecskék ütközése elasztikus.; Adott hőmérsékleten azonos számú részecske az anyagi minőségtől függetlenül azonos kinetikus energiával rendelkezik.; A gáz részecskék átlagos kinetikus energiája az abszolút hőmérséklettel arányos.
+=======
+1.03. Rajzolja fel a H2O molekula szerkezeti képletét úgy  hogy az ábra tükrözze a molekula geometriáját. Jelölje a képleten a molekula polaritását is!, A víz molekulája V-alakú (szögben hajlított) mert az oxigén atomhoz két hidrogén kapcsolódik és két nemkötő elektronpár van rajta.; A kötési szög kb. 104,5°, ami a tetraéderes elrendezés torzult változata.; Az oxigén elektronegativitása miatt a molekula poláris, az oxigén részlegesen negatív (δ⁻), a hidrogének részlegesen pozitívak (δ⁺).; Az oxigén felé mutató nyíl a dipólus irányát jelzi: δ⁻ az O-n, δ⁺ a H-ken.
+1.04. Sorolja fel a másodlagos kémiai kötéseket növekvő erősség szerinti sorrendben!, London-féle diszperziós kölcsönhatás (1-10 kJ/mol) ; dipólus-dipólus kölcsönhatás (3-4 kJ/mol); hidrogén-kötés (10-40 kJ/mol)
+1.05. Rajzoljon példát szerkezeti képletekkel intermolekuláris és intramolekuláris hidrogénkötésre!,
+1.06. Adja meg azokat a tulajdonságokat  amelyek a kinetikus gázelmélet szerint az ideális gázokra jellemzőek!, A részecskék egymástól távol helyezkednek el gyors rendezetlen mozgást végeznek.; A részecskék saját térfogata elhanyagolgató a rendszer (gáz) teljes térfogatához képest.; A részecskék között semmilyen kölcsönhatás nem áll fenn.; A részecskék ütközése elasztikus.; Adott hőmérsékleten azonos számú részecske az anyagi minőségtől függetlenül azonos kinetikus energiával rendelkezik.; A gáz részecskék átlagos kinetikus energiája az abszolút hőmérséklettel arányos.
+>>>>>>> Stashed changes
 1.07. Írja fel az egyesített gáztörvényt. Adja meg az egyes jelölések jelentését is!, 
 1.08. Írja fel az ideális gáztörvényt. Adja meg az egyes jelölések jelentését is!,
 1.09. Rajzoljon diagramot  amely két különböző hőmérsékleten ábrázolja egy ideális gáz molekuláinak sebesség-eloszlását! ,
@@ -33,7 +40,11 @@ question, answer
 1.32. Nevezzen meg egy amfoter anyagot  és egyenletekkel mutassa be  hogy miért amfoter!,    H2O; savként: H2O + NH3 = OH- + NH4+; bázisként: H2O + HCl = H3O+ + Cl-;
 1.33. Grafikonon ábrázolja az előrehaladó és a visszahaladó reakció sebességének időbeli változását kémiai egyensúlyra vezető folyamatban! ,
 1.34. Írja fel a tömeghatás törvényét az aA + bB cC + dD egyensúlyra vezető reakcióra! ,  Kc = [C]^c * [D]^d / [A]^a * [B]^b  ahol Kc: egyensúlyi állandó; [A] [B] [C] [D]: az egyes anyagok egyensúlyi koncentrációi; a b c d az egyes anyagok sztöchiometriai együtthatói ,      
+<<<<<<< Updated upstream
 1.35. Mit mond ki Le Châtelier elve! ,    Ha egy kémiai egyensúlyi rendszerre külső hatás (koncentráció hőmérséklet nyomás) hat akkor az egyensúly eltolódik oly módon hogy a hatás eredményét csökkentse. 
+=======
+1.35. Mit mond ki Le Châtelier elve!, Ha egy kémiai egyensúlyi rendszerre külső hatás (koncentráció hőmérséklet nyomás) hat akkor az egyensúly eltolódik oly módon hogy a hatás eredményét csökkentse. 
+>>>>>>> Stashed changes
 1.36. Adja meg a víz ionszorzatát definiáló egyenletet  adja meg a szorzat számértékét mértékegységgel 25 °C-on! , K=[H3+]*[OH-]=1.00*10-14 mol/dm32
 1.37. Írja fel a pH definícióját egyenlettel. Írja fel a pH és a pOH összefüggését egyenlettel!, pH=-log[H3O+]; pH + pOH = 14
 1.38. Írja fel egy Brønsted-Lowry-féle gyenge bázis disszociációjának reakcióegyenletét és a folyamat egyensúlyi állandóját! ,
@@ -51,6 +62,7 @@ question, answer
 1.50. Írja fel a termodinamika I. főtételét egyenlettel. Adja meg az egyes jelölések értelmezését is! ,ΔE=Q+W ΔE: rendszer belső energiájának változása; Q: rendszer és környezete közötti hőcsere; W: munka
 1.51. Definiálja a reakcióentalpia fogalmát egyenlettel. Adja meg az egyes jelölések értelmezését is! ,Egy rendszer teljes össz energiatartalma (“hőtartalma”). Függ a hőmérséklettől; H=E+pV; H: entalpia (Joule) E: rendszer energiatartalma pV: térfogati munka
 1.52. Írja le  mit mond ki Hess tétele! ,A kémiai reakciókban a fölszabaduló hőmennyiség függ a reaktánsok kezdeti állapotától és mennyiségétől illetve a végtermék minőségétől de NEM függ a részreakciók sorrendjétől.
+<<<<<<< Updated upstream
 1.53. Definiálja az entrópia fogalmát! ,  Az entrópia a rendszer rendezetlenségének mértéke. Jele: S; Mértékegysége: J/K; A termodinamika II. főtétele szerint egy zárt rendszer entrópiája soha nem csökken.; Egy rendszer rendezetlenségi fokát jellemzi. Jele: S.  
 1.54. Írja le  mit mond ki a termodinamika II. főtétele! ,A spontán lejátszódó folyamatokban az entrópia növekszik. Azaz a rendszer és a környezet teljes entrópiaváltozása pozitív.; ΔSrendszer+ΔSkörnyezet>0
 1.55. Definiálja a Gibbs-féle szabadentalpia fogalmát egyenlettel. Adja meg az egyes jelölések értelmezését! , ΔG=ΔH-TxΔS; ΔG: szabadentalpia változás; T: hőmérséklet (K); ΔH: entalpiaváltozás; ΔS: entrópiaváltozás
@@ -60,6 +72,17 @@ question, answer
 1.59. Definiálja a reakciósebesség fogalmát! ,A reakciósebesség megadja hogy milyen gyors az átalakulás mennyivel növekszik a termék koncentrációja vagy mennyivel csökken a kiindulási anyag koncentrációja időegység alatt.
 1.60. Definiálja a felezési idő fogalmát! ,Az az időtartam amely alatt a reaktánsok koncentrációja a felére csökken.  
 1.61. Rajzolja fel egy elemi reakció energiaprofilját az átmeneti állapot és az aktiválási energia feltüntetésével! ,A vízszintes tengely a reakciókoordinátát jelöli (a reakció előrehaladása); A függőleges tengely az energia szintet mutatja ; Kiindulási anyagok (reaktánsok): bal oldalon alacsonyabb energiaszinten; A görbe csúcsa az átmeneti állapot (transition state) ami a legmagasabb energiájú pont; Az aktiválási energia (Ea): a kiindulási anyagok és az átmeneti állapot közötti energia különbség. Termékek: jobb oldalon alacsonyabb energiaszinten ami azt jelzi hogy a reakció exoterm (energia felszabadul); Ha a termékek magasabb energiaszinten lennének az endoterm reakciót jelentene.
+=======
+1.53. Definiálja az entrópia fogalmát!,  Az entrópia a rendszer rendezetlenségének mértéke. Jele: S; Mértékegysége: J/K; A termodinamika II. főtétele szerint egy zárt rendszer entrópiája soha nem csökken.; Egy rendszer rendezetlenségi fokát jellemzi. Jele: S.  
+1.54. Írja le  mit mond ki a termodinamika II. főtétele! ,A spontán lejátszódó folyamatokban az entrópia növekszik. Azaz a rendszer és a környezet teljes entrópiaváltozása pozitív.; ΔSrendszer+ΔSkörnyezet>0
+1.55. Definiálja a Gibbs-féle szabadentalpia fogalmát egyenlettel. Adja meg az egyes jelölések értelmezését! , ΔG=ΔH-TxΔS; ΔG: szabadentalpia változás; T: hőmérséklet (K); ΔH: entalpiaváltozás; ΔS: entrópiaváltozás
+1.56. Definiálja az exergonikus és az endergonikus folyamatok fogalmát! ,Exergonikus a folyamat amennyiben ΔG értéke negatív. Ekkor a folyamat spontán végbe mehet.; Endergonikus a folyamat amennyiben ΔG értéke pozitív. Ekkor a folyamat nem megy végbe spontán módon.
+1.57. Írja le a kémiai reakciók iránya és az azokat kísérő szabadentalpia-változás közötti összefüggést!, A kémiai reakciók a szabadentalpia csökkenés irányába játszódnak le spontán módon. Egy reakció iránya megadható a Gibbs-egyenlet alapján.; ΔG=ΔH-TxΔS; Ha ΔG<0 akkor a reakció spontán; Ha ΔG>0 akkor a reakció nem spontán; Ha ΔG=0 akkor a rendszer egyensúlyban van.
+1.58. Soroljon fel négy nagyenergiájú kötést tartalmazó vegyületet teljes névvel vagy szerkezeti képlettel!, ATP-adenozin-trifoszfát; ADP-adenozin-difoszfát; GTP-guanozin-trifoszfát; H4P2O7-pirofoszforsav
+1.59. Definiálja a reakciósebesség fogalmát! ,A reakciósebesség megadja hogy milyen gyors az átalakulás mennyivel növekszik a termék koncentrációja vagy mennyivel csökken a kiindulási anyag koncentrációja időegység alatt.
+1.60. Definiálja a felezési idő fogalmát!, Az az időtartam amely alatt a reaktánsok koncentrációja a felére csökken.  
+1.61. Rajzolja fel egy elemi reakció energiaprofilját az átmeneti állapot és az aktiválási energia feltüntetésével!, A vízszintes tengely a reakciókoordinátát jelöli (a reakció előrehaladása); A függőleges tengely az energia szintet mutatja ; Kiindulási anyagok (reaktánsok): bal oldalon alacsonyabb energiaszinten; A görbe csúcsa az átmeneti állapot (transition state) ami a legmagasabb energiájú pont; Az aktiválási energia (Ea): a kiindulási anyagok és az átmeneti állapot közötti energia különbség. Termékek: jobb oldalon alacsonyabb energiaszinten ami azt jelzi hogy a reakció exoterm (energia felszabadul); Ha a termékek magasabb energiaszinten lennének az endoterm reakciót jelentene.
+>>>>>>> Stashed changes
 1.62. Adja meg a hőmérséklet és a reakciósebességi állandó összefüggését egyenlettel. Adja meg az egyes jelölések értelmezését is! ,k= Axe - Ea / RT; k: sebességi állandó; A:frekvencia faktor/arányossági tényező; Ea: aktiválási energia; R: egyetemes gázállandó; T: hőmérséklet (K)
 1.63. Írja le  hogy mi alapján dönthető el  hogy egy reakciósorban melyik a sebességmeghatározó lépés! ,A sebességmeghatározó lépés a reakciómechanizmusban a leglassúbb lépés a legkisebb sebességi állandóval rendelkezik.; (A teljes reakció nem lehet gyorsabb mint a sebességmeghatározó lépés)
 1.64. Grafikonon ábrázolja egy olyan többlépéses reakciósor kiindulási anyagának  köztitermékének és végtermékének koncentrációinak időbeli változását  ahol a köztitermék a folyamat jelentős részében stacionárius állapotban van! ,
@@ -90,12 +113,21 @@ question, answer
 1.89. Definiálja a diasztereomerek fogalmát. Adjon rá példát projektív képletekkel! ,Diasztereomer vegyületpárt alkotnak az olyan több aszimmetriacentrummal rendelkező optikai izomerek; amelyek a teljes molekulát tekintve nincsenek tükörképi viszonyban egymással; csak részlegesen tükörképei egymásnak.
 1.90. Rajzolja fel a mezo-borkősav molekula projektív képletét. Adja meg a molekula optikai aktivitásának mértékét  és az értéket szövegesen indokolja! ,Optikai aktivitása nincsen mert a 2 kiralitáscentrum forgatása kiegyenlíti egymást. Mezo-borkősav:  Optikai aktivitás: inaktív (optikailag inaktív) ; Indoklás: A mezo-borkősav belső síkkal rendelkezik amely miatt a molekula tükörképe megegyezik önmagával így nem mutat optikai aktivitást.; 
 1.91.Rajzoljon le egy fedő és egy nyitott állású etánmolekulát. Jelölje  hogy melyik az energetikailag kedvezőbb állapot! ,   Fedő állású etán:  Energetikailag kedvezőbb állapot: nyitott állású etán (alacsonyabb energiájú) ,
+<<<<<<< Updated upstream
 1.92. Rajzolja le és nevezze meg a ciklohexán két szélsőséges konformációs izomerjét! ,
 1.93. Rajzolja le és nevezze meg az 1 2-dimetil-ciklopentán cisz és transz izomerjét! ,
 1.94. Rajzolja le és nevezze meg a 2-butén két izomerjét! ,
 1.95. Írja fel az etén vízaddíciójának reakcióegyenletét szerkezeti képletekkel! ,C2H4 + H2O = CH3CH2OH ,
 1.96. Írja fel az izoprén szerkezeti képletét. Nevezze meg a molekulát szisztematikus névvel! ,
 1.97. Írja fel az acetilén vízaddíciójának reakcióegyenletét szerkezeti képletekkel! ,
+=======
+1.92. Rajzolja le és nevezze meg a ciklohexán két szélsőséges konformációs izomerjét!,
+1.93. Rajzolja le és nevezze meg az 1 2-dimetil-ciklopentán cisz és transz izomerjét!,
+1.94. Rajzolja le és nevezze meg a 2-butén két izomerjét!,
+1.95. Írja fel az etén vízaddíciójának reakcióegyenletét szerkezeti képletekkel! ,C2H4 + H2O = CH3CH2OH ,
+1.96. Írja fel az izoprén szerkezeti képletét. Nevezze meg a molekulát szisztematikus névvel!,
+1.97. Írja fel az acetilén vízaddíciójának reakcióegyenletét szerkezeti képletekkel!,
+>>>>>>> Stashed changes
 1.98. Rajzolja fel a benzol szerkezeti képletét úgy  hogy a képlet tükrözze a molekula valós elektroneloszlását. Adja meg a molekulában a C-C-C kötésszögek értékét! ,
 1.99. Rajzolja fel szerkezeti képletekkel egy primer alkohol oxidációjának reakcióegyenletét (Milyen vegyületcsaládba tartozik a termék?)!,
 1.100. Rajzolja fel szerkezeti képletekkel egy szekunder alkohol oxidációjának reakcióegyenletét (Milyen vegyületcsaládba tartozik a termék?)!,
@@ -117,6 +149,7 @@ question, answer
 1.116. Rajzolja fel szerkezeti képletekkel a karbonsav-észterek képződésének reakcióegyenletét! ,     
 1.117. Rajzolja fel a piroszőlősav keto- és enol tautomerjeit szerkezeti képletekkel! ,       
 1.118. Rajzolja fel szerkezeti képletekkel egy lakton képződésének reakcióegyenletét! ,   
+<<<<<<< Updated upstream
 1.119. Adja meg a ketontestek nevét és szerkezeti képletét! , Aceton: CH3-CO-CH3 ; Acetoacetát: CH3-CO-CH2-COO⁻ ; β-hidroxibutirát: CH3-CHOH-CH2-COO⁻ ,
 1.120. Rajzoljon fel szerkezeti képletekkel egy olyan reakcióegyenletet  amelyben egy amin acilezése zajlik le! ,
 1.121. Rajzolja fel szerkezeti képletekkel egy laktám képződésének reakcióegyenletét! ,
@@ -124,3 +157,12 @@ question, answer
 1.123. Rajzoljon fel szerkezeti képletekkel egy olyan reakcióegyenletet  amelyben egy primer amin reagál egy karbonil vegyülettel! ,      
 1.124. Rajzolja fel a szappanok általános szerkezeti képletét és írja le röviden detergens hatásuk molekuláris szintű hátterét! , A szappanok nátrium- vagy kálium-sói hosszú láncú karbonsavaknak; Általános képletük: R-COO– Na+ (vagy K+) ahol R egy hosszú szénláncú alkilcsoport; A szappanmolekulák amfipatikus jellegűek: hidrofil (poláris) karboxilát csoport és hidrofób (apoláris) hosszú szénlánc; A szappanok detergens hatása abból ered hogy a hidrofób rész a zsírokhoz és olajokhoz kötődik míg a hidrofil rész a vízhez; Így a szappanmolekulák micellákat képeznek amelyekben a zsírok és olajok a micella belsejébe kerülnek és vízben diszpergálódnak; Ezáltal a szappanok segítik a zsírok és olajok eltávolítását vízzel.
 1.125. Adja meg a kolloid állapot legalább három jellemzőjét! ,méret : 1-1000nm; nagy fajlagos felület; diszperz rendszerek -szórják a fényt (Tyndall-jelenség); részecskék diffúziója igen lassú
+=======
+1.119. Adja meg a ketontestek nevét és szerkezeti képletét! , Aceton: CH3-CO-CH3 ; Acetoacetát: CH3-CO-CH2-COO⁻; β-hidroxibutirát: CH3-CHOH-CH2-COO⁻ ,
+1.120. Rajzoljon fel szerkezeti képletekkel egy olyan reakcióegyenletet  amelyben egy amin acilezése zajlik le! ,
+1.121. Rajzolja fel szerkezeti képletekkel egy laktám képződésének reakcióegyenletét!,
+1.122. Rajzoljon fel szerkezeti képletekkel egy vegyes anhidridet  egy tioésztert és egy enol-észtert! ,  Vegyes anhidrid: két különböző savból származó anhidrid (R–CO–O–CO–R');Tioészter: észter ahol az oxigén helyett kén található (R–CO–S–R'); Enol-észter: olyan észter amely enol formában van (R–CO–CH=CH–OH).
+1.123. Rajzoljon fel szerkezeti képletekkel egy olyan reakcióegyenletet  amelyben egy primer amin reagál egy karbonil vegyülettel! ,      
+1.124. Rajzolja fel a szappanok általános szerkezeti képletét és írja le röviden detergens hatásuk molekuláris szintű hátterét!, A szappanok nátrium- vagy kálium-sói hosszú láncú karbonsavaknak; Általános képletük: R-COO– Na+ (vagy K+) ahol R egy hosszú szénláncú alkilcsoport; A szappanmolekulák amfipatikus jellegűek: hidrofil (poláris) karboxilát csoport és hidrofób (apoláris) hosszú szénlánc; A szappanok detergens hatása abból ered hogy a hidrofób rész a zsírokhoz és olajokhoz kötődik míg a hidrofil rész a vízhez; Így a szappanmolekulák micellákat képeznek amelyekben a zsírok és olajok a micella belsejébe kerülnek és vízben diszpergálódnak; Ezáltal a szappanok segítik a zsírok és olajok eltávolítását vízzel.
+1.125. Adja meg a kolloid állapot legalább három jellemzőjét!, méret: 1-1000nm; nagy fajlagos felület; diszperz rendszerek -szórják a fényt (Tyndall-jelenség); részecskék diffúziója igen lassú
+>>>>>>> Stashed changes
