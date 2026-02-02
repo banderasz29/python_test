@@ -1,201 +1,156 @@
 from __future__ import annotations
+import csv
 import json
-import os
+import random
 import re
 from datetime import datetime
 from pathlib import Path
-import tempfile
-
 import streamlit as st
-from qa_utils_kemia import beolvas_csv_dict, valassz_kerdeseket
+
 
 # ─────────────────────────────────────────────────────────
-# Stabil útvonalkezelés és fallback-ek
+# Alapbeállítások
 APP_DIR = Path(__file__).parent
-
-# ❶ Repo/Cloud: CSV az app mappájában
-CSV_REL = APP_DIR / "kerdes_valaszok_kemia.csv"
-
-# ❷ Lokális Mac abszolút útvonal
-CSV_ABS = Path(
-    "/Users/i0287148/Documents/python_test/python_test/orvosi_kemia/kerdes_valaszok_kemia.csv"
-)
-
-# ❸ Környezeti változó
-CSV_ENV = os.environ.get("KEMIA_QA_CSV")
-
-
-def resolve_csv_path() -> Path:
-    candidates: list[Path] = []
-    if CSV_ENV:
-        candidates.append(Path(CSV_ENV))
-    candidates.append(CSV_REL)
-    candidates.append(CSV_ABS)
-    for p in candidates:
-        p = Path(p)
-        if p.exists():
-            return p
-    return CSV_REL
-
-
-CSV_FAJL = resolve_csv_path()
-
-# Képek könyvtár: környezeti változó → APP_DIR/pic → lokális abszolút
-PIC_ENV = os.environ.get("KEMIA_PIC_DIR")
-PIC_REL = APP_DIR / "pic"
-PIC_ABS = Path("/Users/i0287148/Documents/python_test/python_test/orvosi_kemia/pic")
-PIC_DIR = Path(PIC_ENV) if PIC_ENV else (PIC_REL if PIC_REL.exists() else PIC_ABS)
-
-# Beállítások
 KERDES_SZAM_KOR = 10
 KUSZOB = 7
 
 
 # ─────────────────────────────────────────────────────────
-# Segédfüggvények
-def expand_answers(ans_list: list[str]) -> list[str]:
-    out: list[str] = []
-    for a in ans_list:
-        s = a or ""
-        if not s.strip():
-            continue
-        if "\n" in s:
-            out.append(s)
-        else:
-            if "," in s or ";" in s:
-                parts = [p.strip() for p in re.split(r"[;,]", s) if p.strip()]
-                out.extend(parts)
-            else:
-                out.append(s.strip())
+# CSV beolvasás (question / answer)
+def beolvas_csv(path: Path) -> dict[str, list[str]]:
+    """
+    Beolvassa a CSV-t. Elvárt oszlopok: question, answer.
+    Ha a válasz nincs külön oszlopban, az első ? vagy ! után levágjuk (a maradék lesz a válasz).
+    A válaszokat ';' és sortörés alapján daraboljuk sorokra.
+    Ha nincs válasz, egyetlen üres sort adunk vissza.
+    """
+    qa: dict[str, list[str]] = {}
+    with path.open("r", encoding="utf-8-sig", newline="") as f:
+        reader = csv.DictReader(f)
+        if not reader.fieldnames:
+            return {}
 
-    seen = set()
-    uniq: list[str] = []
-    for p in out:
-        key = p.lower()
-        if key not in seen:
-            seen.add(key)
-            uniq.append(p)
-    return uniq
+        fn = {c.lower().strip(): c for c in reader.fieldnames}
+        c_q = fn.get("question") or fn.get("kerdes") or fn.get("kérdés")
+        c_a = fn.get("answer") or fn.get("valasz") or fn.get("válasz")
 
+        for row in reader:
+            q_raw = (row.get(c_q) or "").strip() if c_q else ""
+            a_raw = (row.get(c_a) or "").strip() if c_a else ""
 
-def answers_bulleted_md(ans_list: list[str]) -> str:
-    items = expand_answers(ans_list)
-    lines: list[str] = []
+            # Ha egy cellában van a kérdés+válasz → split ? vagy ! után
+            if not a_raw and q_raw:
+                parts = re.split(r"([!?])", q_raw, maxsplit=1)
+                if len(parts) >= 3:
+                    q_raw = (parts[0] + parts[1]).strip()
+                    a_raw = parts[2].strip()
 
-    for item in items:
-        if "\n" not in item:
-            lines.append(f"- {item}")
-        else:
-            raw_lines = item.splitlines()
-            idx = 0
-            while idx < len(raw_lines) and not raw_lines[idx].strip():
-                idx += 1
-            if idx >= len(raw_lines):
+            if not q_raw:
                 continue
-            first = raw_lines[idx].strip()
-            rest = "\n".join(raw_lines[idx + 1 :])
 
-            lines.append(f"- {first}")
-            if rest.strip():
-                lines.append("")
-                lines.append("```")
-                lines.append(rest.rstrip())
-                lines.append("```")
+            if a_raw:
+                parts = re.split(r";|\n", a_raw)
+                answers = [p.strip() for p in parts if p.strip() != ""]
+                if not answers:
+                    answers = [""]  # üres sor
+            else:
+                answers = [""]  # üres sor, ha nincs válasz
 
-    return "\n".join(lines)
+            qa[q_raw] = answers
 
-
-def extract_qnum(kerdes: str) -> str | None:
-    m = re.match(r"^\s*(\d+)\.", kerdes)
-    return m.group(1) if m else None
-
-
-def find_question_images(qnum: str) -> list[Path]:
-    images: list[Path] = []
-    for ext in (".png", ".jpg", ".jpeg"):
-        p_main = PIC_DIR / f"{qnum}{ext}"
-        if p_main.exists():
-            images.append(p_main)
-
-    for pattern in (f"{qnum}_*.png", f"{qnum}_*.jpg", f"{qnum}_*.jpeg"):
-        images.extend(sorted(PIC_DIR.glob(pattern), key=lambda p: p.name))
-    return images
+    return qa
 
 
 # ─────────────────────────────────────────────────────────
-# Cache-elt betöltés
+# Képek és kérdés-sorszám kinyerése
+def extract_qnum(kerdes: str) -> str | None:
+    """
+    A kérdés elejéről kiveszi az x.xx formátumot (pl. 1.01 vagy 2.09).
+    Csak a legelején lévő minta számít.
+    """
+    m = re.match(r"^\s*(\d+\.\d{2})", kerdes)
+    return m.group(1) if m else None
+
+
+def find_images(qnum: str, pic_dir: Path) -> list[Path]:
+    """
+    Képkeresés a következő minták szerint (kis/nagy kiterjesztés is):
+      - x.xx.png / x.xx.PNG
+      - x.xx_*.png / x.xx_*.PNG
+    """
+    exts = (".png", ".PNG")
+    images: list[Path] = []
+
+    # Fő kép
+    for ext in exts:
+        p = pic_dir / f"{qnum}{ext}"
+        if p.exists():
+            images.append(p)
+
+    # Több kép: x.xx_*.png
+    for ext in exts:
+        images.extend(sorted(pic_dir.glob(f"{qnum}_*{ext}"), key=lambda p: p.name))
+
+    # Dedup
+    out, seen = [], set()
+    for p in images:
+        rp = p.resolve()
+        if rp not in seen:
+            seen.add(rp)
+            out.append(p)
+    return out
+
+
+# ─────────────────────────────────────────────────────────
+# Kérdésválasztás
+def valassz_kerdeseket(qa: dict[str, list[str]], db: int) -> list[str]:
+    keys = list(qa.keys())
+    if len(keys) <= db:
+        random.shuffle(keys)
+        return keys
+    return random.sample(keys, db)
+
+
+# ─────────────────────────────────────────────────────────
+# Cache
 @st.cache_data(show_spinner=False)
-def betolt_qa(path: Path):
-    p = Path(path)
-    if not p.exists():
-        raise FileNotFoundError(f"Nem található a fájl: {p.resolve()}")
-    return beolvas_csv_dict(str(p))
+def betolt_qa_cached(path: Path) -> dict[str, list[str]]:
+    return beolvas_csv(path)
 
 
+# ─────────────────────────────────────────────────────────
+# App
 def run_app():
-    st.set_page_config(page_title="Orvosi kémia Kvíz", page_icon="🧪", layout="wide")
-    st.title("🧪 Orvosi Kémia – Minimum Követelmény Kvíz (önértékelős)")
+    st.set_page_config(page_title="Orvosi kémia kvíz", page_icon="🧪", layout="wide")
 
-    # Sidebar — adatforrások
-    st.sidebar.header("Adatforrások")
-    feltoltott = st.sidebar.file_uploader("Q&A CSV feltöltése", type=["csv"])
-    st.sidebar.caption("Ha feltöltesz egy CSV-t, azt használjuk erre a futásra.")
-    st.sidebar.markdown(
-        f"**Aktív CSV**: `{CSV_FAJL}` — létezik: **{Path(CSV_FAJL).exists()}**  \n"
-        f"**Kép-könyvtár**: `{PIC_DIR}` — létezik: **{Path(PIC_DIR).exists()}**"
-    )
+    # ─── Félévválasztó a cím ELÉ (nincs oldalsáv) ────────
+    felev = st.selectbox("Félév kiválasztása", ["1. félév", "2. félév"], index=0)
 
-    # Debug info
-    with st.sidebar.expander("Debug info", expanded=False):
-        st.code(
-            f"""CWD: {Path.cwd()}
-__file__: {__file__}
-APP_DIR: {APP_DIR}
-CSV_REL: {CSV_REL} (exists: {CSV_REL.exists()})
-CSV_ABS: {CSV_ABS} (exists: {CSV_ABS.exists()})
-CSV_ENV: {CSV_ENV}
-CSV_FAJL: {CSV_FAJL} (exists: {Path(CSV_FAJL).exists()})
-PIC_DIR: {PIC_DIR} (exists: {Path(PIC_DIR).exists()})
-Dir APP_DIR: {', '.join(p.name for p in APP_DIR.iterdir())}"""
-        )
+    # Cím a félévválasztó alatt
+    st.title("🧪 Orvosi Kémia – Minimumkövetelmény kvíz (önértékelős)")
 
-    # CSV betöltés (feltöltés esetén a saját parserrel)
-    try:
-        if feltoltott is not None:
-            tmp_path = Path(tempfile.gettempdir()) / "uploaded.csv"
-            with open(tmp_path, "wb") as f:
-                f.write(feltoltott.read())
-            qa = beolvas_csv_dict(str(tmp_path))
-            st.sidebar.success("Feltöltött CSV betöltve.")
-        else:
-            qa = betolt_qa(CSV_FAJL)
-            st.sidebar.success(f"Betöltve: {Path(CSV_FAJL).name}")
-    except FileNotFoundError as e:
-        st.sidebar.error(str(e))
-        st.sidebar.info(
-            "A CSV nem található.\n"
-            "• Tedd a 'kerdes_valaszok_kemia.csv' fájlt az app_kemia.py mellé (repo/Cloud), vagy\n"
-            "• Állítsd be a KEMIA_QA_CSV környezeti változót, vagy\n"
-            "• Tölts fel egy CSV-t a bal oldali panelen."
-        )
-        st.stop()
+    # Félévhez tartozó források (nincs oldalsávos ellenőrzés)
+    if felev == "1. félév":
+        CSV_PATH = APP_DIR / "kerdes_valaszok_kemia1.csv"
+        PIC_DIR = APP_DIR / "pic1"
+    else:
+        CSV_PATH = APP_DIR / "kerdes_valaszok_kemia2.csv"
+        PIC_DIR = APP_DIR / "pic2"
 
-    # ─────────────────────────────────────────────────────
-    # State kezdeti értékek
+    # CSV betöltés (egyszerűen, ellenőrzés nélkül)
+    qa = betolt_qa_cached(CSV_PATH)
+
+    # ─── Session state ────────────────────────────────────
     if "kor_kerdesei" not in st.session_state:
         st.session_state.kor_kerdesei = []
-
     if "show_answer" not in st.session_state:
         st.session_state.show_answer = {}
-
     if "itel" not in st.session_state:
         st.session_state.itel = {}
-
     if "osszegzes" not in st.session_state:
         st.session_state.osszegzes = None
 
-    # ─────────────────────────────────────────────────────
-    # Műveletek
+    # ─── Funkciók ─────────────────────────────────────────
     def uj_kor():
         st.session_state.kor_kerdesei = valassz_kerdeseket(qa, KERDES_SZAM_KOR)
         st.session_state.show_answer = {k: False for k in st.session_state.kor_kerdesei}
@@ -208,39 +163,28 @@ Dir APP_DIR: {', '.join(p.name for p in APP_DIR.iterdir())}"""
         st.session_state.itel = {}
         st.session_state.osszegzes = None
 
-    def mutasd_valaszt(kerdes: str):
-        st.session_state.show_answer[kerdes] = True
-
-    # ─────────────────────────────────────────────────────
-    # Fő UI
-    c1, c2 = st.columns([1, 1])
+    # ─── Felső gombok ─────────────────────────────────────
+    c1, c2 = st.columns(2)
     with c1:
         st.button(
             f"🧪 Új kör indítása ({KERDES_SZAM_KOR} kérdés)",
             type="primary",
             use_container_width=True,
             on_click=uj_kor,
-            key="btn_new_round",
         )
     with c2:
-        st.button(
-            "♻️ Teljes reset",
-            use_container_width=True,
-            on_click=reset_minden,
-            key="btn_full_reset",
-        )
+        st.button("♻️ Teljes reset", use_container_width=True, on_click=reset_minden)
 
     st.divider()
 
+    # Ha nincs aktív kör
     if not st.session_state.kor_kerdesei:
         st.info(
-            f"Kezdéshez kattints az **Új kör indítása ({KERDES_SZAM_KOR} kérdés)** gombra! "
-            "Minden kérdésnél előbb **megmutathatod a választ**, majd **önértékeled**, hogy helyes volt-e."
+            f"Kezdéshez kattints az **Új kör indítása ({KERDES_SZAM_KOR} kérdés)** gombra!"
         )
         return
 
-    st.subheader("Kérdések egy körben")
-
+    # ─── Kérdések listázása ──────────────────────────────
     helyes_db = sum(
         1
         for k in st.session_state.kor_kerdesei
@@ -253,66 +197,63 @@ Dir APP_DIR: {', '.join(p.name for p in APP_DIR.iterdir())}"""
     )
 
     st.caption(
-        f"Önértékelt kérdések: {itelt_db} / {len(st.session_state.kor_kerdesei)} — "
-        f"Helyesnek ítélt: {helyes_db}"
+        f"Önértékelt kérdések: {itelt_db} / {len(st.session_state.kor_kerdesei)} "
+        f"— Helyesnek ítélt: {helyes_db}"
     )
 
     for i, kerdes in enumerate(st.session_state.kor_kerdesei, start=1):
         st.markdown(f"**{i}.** {kerdes}")
+        col1, col2 = st.columns([1, 2])
 
-        cols = st.columns([1, 2])
-        with cols[0]:
+        with col1:
             st.button(
                 "👀 Válasz megjelenítése",
-                key=f"btn_show_{i}",
-                on_click=mutasd_valaszt,
-                args=(kerdes,),
+                key=f"show_{i}",
                 use_container_width=True,
+                on_click=lambda k=kerdes: st.session_state.show_answer.__setitem__(
+                    k, True
+                ),
             )
 
-        with cols[1]:
-            if st.session_state.show_answer.get(kerdes, False):
+        with col2:
+            if st.session_state.show_answer.get(kerdes):
                 st.success("Elfogadható válasz(ok):")
-                st.markdown(answers_bulleted_md(qa.get(kerdes, [])))
+                answers = qa.get(kerdes, [""])
+                if not answers:
+                    answers = [""]  # üres sor
+                st.markdown("\n".join(answers))
 
+                # Képek (x.xx.png és x.xx_*.png kis/NAGY kiterjesztéssel)
                 qnum = extract_qnum(kerdes)
                 if qnum:
-                    imgs = find_question_images(qnum)
-                    if imgs:
-                        st.markdown(
-                            "<div style='height: 0.5rem'></div>", unsafe_allow_html=True
+                    imgs = find_images(qnum, PIC_DIR)
+                    for idx, img in enumerate(imgs, start=1):
+                        st.image(
+                            str(img),
+                            caption=f"{qnum} ({idx})",
+                            use_container_width=True,
                         )
-                        for idx_img, img_path in enumerate(imgs, start=1):
-                            st.image(
-                                str(img_path),
-                                caption=(
-                                    f"Ábra #{qnum}"
-                                    if idx_img == 1
-                                    else f"Ábra #{qnum} ({idx_img})"
-                                ),
-                                use_container_width=True,
-                            )
 
-                current = st.session_state.itel.get(kerdes)
-                radio_index = 0 if (current is None or current == "helyes") else 1
-                valasztas = st.radio(
+                # Önértékelés
+                cur = st.session_state.itel.get(kerdes)
+                default_index = 0 if cur in (None, "helyes") else 1
+                val = st.radio(
                     "Önértékelés:",
-                    options=["Helyesnek ítélem", "Nem volt helyes"],
-                    index=radio_index,
+                    ["Helyesnek ítélem", "Nem volt helyes"],
+                    index=default_index,
                     key=f"radio_{i}",
                     horizontal=True,
                 )
                 st.session_state.itel[kerdes] = (
-                    "helyes" if valasztas == "Helyesnek ítélem" else "hibas"
+                    "helyes" if val == "Helyesnek ítélem" else "hibas"
                 )
             else:
-                st.info(
-                    "Kattints a „Válasz megjelenítése” gombra, és utána értékeld a válaszodat."
-                )
+                st.info("Kattints a „Válasz megjelenítése” gombra.")
 
         st.write("---")
 
-    if st.button("🏁 Teszt kiértékelése", type="primary", key="btn_evaluate_test"):
+    # ─── Kiértékelés ─────────────────────────────────────
+    if st.button("🏁 Teszt kiértékelése", type="primary"):
         helyes_db = sum(
             1
             for k in st.session_state.kor_kerdesei
@@ -321,42 +262,36 @@ Dir APP_DIR: {', '.join(p.name for p in APP_DIR.iterdir())}"""
         sikeres = helyes_db >= KUSZOB
         st.session_state.osszegzes = {"helyes_db": helyes_db, "sikeres": sikeres}
 
-    if st.session_state.osszegzes is not None:
-        helyes_db = st.session_state.osszegzes["helyes_db"]
-        sikeres = st.session_state.osszegzes["sikeres"]
-        if sikeres:
-            st.success(
-                f"✅ SIKERES TESZT — GRATULÁLUNK! {helyes_db} / {len(st.session_state.kor_kerdesei)} "
-                f"(küszöb: {KUSZOB})"
-            )
+    if st.session_state.osszegzes:
+        h = st.session_state.osszegzes["helyes_db"]
+        s = st.session_state.osszegzes["sikeres"]
+
+        if s:
+            st.success(f"✅ Sikeres teszt! {h} / {len(st.session_state.kor_kerdesei)}")
         else:
-            st.error(
-                f"❌ SIKERTELEN TESZT — NO WORRIES {helyes_db} / {len(st.session_state.kor_kerdesei)} "
-                f"(legalább {KUSZOB} szükséges)"
-            )
+            st.error(f"❌ Sikertelen teszt. {h} / {len(st.session_state.kor_kerdesei)}")
 
         export = {
             "kor_id": datetime.utcnow().isoformat() + "Z",
             "kerdesek_szama": len(st.session_state.kor_kerdesei),
             "kuszob": KUSZOB,
-            "helyes_db": helyes_db,
-            "sikeres": sikeres,
+            "helyes_db": h,
+            "sikeres": s,
             "reszletek": [
                 {
                     "kerdes": k,
-                    "elfogadhato_valaszok": qa.get(k, []),
+                    "valaszok": qa.get(k, [""]) or [""],
                     "itel": st.session_state.itel.get(k),
                 }
                 for k in st.session_state.kor_kerdesei
             ],
         }
+
         st.download_button(
             label="📥 Eredmények letöltése (JSON)",
             data=json.dumps(export, ensure_ascii=False, indent=2).encode("utf-8"),
-            file_name="kviz_eredmeny_onertekeles.json",
+            file_name="kviz_eredmeny.json",
             mime="application/json",
-            use_container_width=True,
-            key="btn_download_json",
         )
 
 
