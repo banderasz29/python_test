@@ -8,7 +8,6 @@ from datetime import datetime
 # Page config
 st.set_page_config(page_title="Weather Dashboard", layout="wide")
 
-# Custom CSS for styling
 st.markdown(
     """
     <style>
