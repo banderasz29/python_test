@@ -1,101 +1,101 @@
 question, answer
-1. Adja meg a karbamid és a guanidin szerkezeti képletét!, 
-2. Írja fel szerkezeti képlettel a karbamoil-foszfát-szintetáz I reakciót!, 
-3. Adja meg a kreatin és a kreatin-foszfát (foszfokreatin) szerkezeti képletét!, 
-4. Írja fel szerkezeti képletekkel a kreatin-kináz által katalizált reakciót!, 
-5. Adja meg a kreatinin szerkezeti képletét és legfontosabb orvosi jelentőségét!, 
-6. Írja fel egy laktám képződésének reakcióegyenletét szerkezeti képletekkel!, 
-7. Rajzolja fel a pirrol és az imidazol szerkezeti képletét!, 
-8. Rajzolja fel a piridin és a pirimidin szerkezeti képletét és jellemezze sav-bázis tulajdonságaikat!, 
-9. Adja meg a purin szerkezeti képletét a gyűrűben lévő atomok számozásával!, 
-10. Rajzolja le a nikotinamid és az indol szerkezeti képletét!, 
-11. Rajzolja le a húgysav szerkezeti képletét és adja meg legfontosabb élettani jelentőségét!, Emberben a húgysav a purinmetabolizmus végterméke. 
-12. Adja meg az alkaloidok definícióját!, Az alkaloidok természetben előforduló; többnyire bázikus nitrogénatomot tartalmazó; erős élettani hatással bíró vegyületek. 
-13. Rajzolja fel három nagyenergiájú kötést tartalmazó vegyület szerkezeti képletét. Jelölje meg bennük és nevezze meg a nagyenergiájú kötés típusát!, 
-14. Adja meg az alábbi vegyületek (NAD+ FAD CoA-SH ATP) teljes nevét és biológia szerepét!, NAD+: nikotinamid-adenin-dinukleotid oxidálószer koenzim; FAD: flavin-adenin-dinukleotid oxidálószer prosztetikus csoport; CoA-SH: koenzim-A acil-csoport szállítása; ATP: adenozin-trifoszfát: foszforilezőszer (foszforil-csoport donor) energiatárolás 
-15. Rajzolja fel a citozin és a timin szerkezeti képletét!,     
-16. Írja fel képletekkel az uracil tautomériáját!, 
-17. Adja meg az adenin és a guanin szerkezeti képletét!, 
-18. Sorolja fel a DNS és RNS szerkezete közötti különbségeket (min. 3)?, DNS: 2-dezoxi-ribóz csak négyféle bázis (A G C T) purinbázisok száma = a pirimidinbázisok sz. sokkal több nukleotidból áll. általában kettős szálú; RNS: ribóz uracil a timin helyett és ún. ritka bázisok a purin- és pirimidin-bázisok aránya tetszőleges rövidebb polimer ált. egy szálból áll 
-19. Írja fel az α-aminosavak általános képletét nemionos és ikerionos formában!, 
-20. Adja meg a glicin és az L-alanin szerkezeti képletét!, 
-21. Adja meg az L-valin és az L-leucin szerkezeti képletét!, 
-22. Adja meg az L-tirozin és az L-fenil-alanin szerkezeti képletét!, 
-23. Adja meg az L-metionin és az L-cisztein szerkezeti képletét!, 
-24. Adja meg az L-szerin és az L-treonin szerkezeti képletét!, 
-25. Adja meg az L-aszpartát és az L-glutamát szerkezeti képletét!, 
-26. Adja meg az L-aszparagin és az L-glutamin szerkezeti képletét!, 
-27. Adja meg az L-lizin és az L-arginin szerkezeti képletét!, 
-28. Adja meg az L-triptofán és az L-hisztidin szerkezeti képletét!, 
-29. Adja meg az L-prolin és az L-izoleucin szerkezeti képletét!, 
-30. Definiálja az aminosavak izoelektromos pontjának fogalmát!, Azt a pH-t amelyen az aminosav össztöltése 0 izoelektromos pH-nak vagy izoelektromos pontnak nevezzük (pI). 
-31. Írja fel általános szerkezeti képletekkel a peptidkötés kialakulásának reakcióegyenletét!, 
-32. Adja meg az alanil-glicin dipeptid szerkezeti képletét!, 
-33. Adja meg a glicil-alanin dipeptid szerkezeti képletét!, 
-34. Rajzolja fel a redukált glutation szerkezeti képletét. Karikázza be a képleten hogy a molekula mely részletének köszönheti antioxidáns hatását!, 
-35. Adja meg a fehérjék másodlagos szerkezetének definícióját!, A másodlagos szerkezet a polimer láncban a közeli aminosavak egymáshoz viszonyított elhelyezkedését adja meg pl.:; α-hélix; β-redő; β-kanyar. 
-36. Sorolja fel a fehérjék harmadlagos szerkezetének fenntartásáért felelős kölcsönhatások főbb típusait!, Hidrofób kölcsönhatások; hidrogén-kötés; ionos kötés; diszulfid-híd. 
-37. Írja fel a hemoglobin CO2 kötése során lejátszódó reakciót a hemoglobin megfelelő funkciós csoportjának szerkezeti képletét is feltüntetve!, 
-38. Írja fel a szénsavanhidráz reakciót!, 
-39. Definiálja a heterotrop modulátor fogalmát és adjon rá egy példát!, A heterotrop moduláció azt jelenti hogy egy a ligandumtól eltérő molekula hat alloszterikus modulátorként.; Ez a hatás lehet pozitív vagy negatív.; Például a hemoglobin negatív heretotrop modulátora a 2.3-biszfoszfoglicerát.; Ez csökkenti a hemoglobin oxigénhez való affinitását. 
-40. Definiálja a kooperativitás fogalmát és adjon rá egy példát!, Egy enzim vagy más fehérje jellemzője amelyben egy ligandum első molekulájának megkötése megváltoztatja az affinitást a második molekulához.; Pozitív kooperáció esetén a második ligandummolekula iránti affinitás nő negatív kooperációban csökken.; Például hemoglobin és oxigén pozitív kooperativitás. 
-41. Írja fel az enzimműködés Michaelis-Menten szerinti modelljét reakcióegyenletekkel!, Jelölje meg a sebességmeghatározó lépést!, 
-42. Írja fel a Michaelis-Menten egyenletet a jelölések értelmezésével!, V0 = Vmax [S] /(KM + [S]); V0 = kezdeti reakciósebesség; Vmax = maximális reakciósebesség; [S] = szubsztrátkoncentráció (M); KM = Michaelis-Menten állandó 
-43. Adja meg az enzimaktivitás definícióját és két leggyakoribb mértékegységét!, Egy enzim aktivitása az enzim által egységnyi idő alatt átalakított szubsztrát anyagmennyiségét jelenti.; Egységei: unit (U): μmol/min; katal: mol/s 
-44. Definiálja a KM (Michaelis-Menten) állandót. Az enzim mely tulajdonságát jellemzi ez a szám!, A KM az a szubsztrátkoncentráció (mol/dm3) amely mellett a katalizált reakció a maximális sebesség (Vmax) felével játszódik le.; A reakciót katalizáló fehérje szubsztráthoz való affinitását mutatja meg. 
-45. Mit jelent az enzimaktivitás alloszterikus módosítása?, Az enzim és a szabályozó molekula közötti nemkovalens kapcsolat az enzim specifikus szabályzóhelyén (allosztérikus kötőhely) mely az enzim konformációjának és ez által az aktivitásának megváltozásához vezet. 
-46. Mit jelent az enzimaktivitás kovalens módosítása?, Az enzim reverzibilis kovalens poszt-transzlációs módosítása mely az enzimaktivitás megváltozásához vezet. 
-47. Írja fel szerkezeti képletekkel a hexokináz által katalizált reakciót!, 
-48. Írja fel szerkezeti képletekkel a foszfohexóz-izomeráz által katalizált reakciót!, 
-49. Írja fel szerkezeti képletekkel a foszfofruktokináz-1 által katalizált reakciót!, 
-50. Írja fel szerkezeti képletekkel az aldoláz által katalizált reakciót!, 
-51. Írja fel szerkezeti képletekkel a glicerinaldehid-3-foszfát-dehidrogenáz által katalizált reakciót!, 
-52. Írja fel szerkezeti képletekkel a foszfoglicerát-mutáz által katalizált reakciót!, 
-53. Írja fel szerkezeti képletekkel a laktát-dehidrogenáz által katalizált reakciót!, 
-54. Írja fel szerkezeti képletekkel a citrát-szintáz által katalizált reakciót!, 
-55. Írja fel szerkezeti képletekkel a szukcinil-CoA-szintetáz (más néven szukcinát-tiokináz) által katalizált reakciót!, 
-56. Írja fel szerkezeti képletekkel a szukcinát-dehidrogenáz által katalizált reakciót!, 
-57. Adja meg egy aldotrióz és egy ketotrióz szerkezeti képletét és nevét!, 
-58. Rajzolja fel a nyílt láncú D-glükóz Fischer-féle projektív képletét a D konfigurációt mutató C-atom megjelölésével!, 
-59. Definiálja az epimerek fogalmát!, Az epimerek olyan diasztereomerek melyek konfigurációja csak egy C-atomon különbözik. 
-60. Rajzolja fel a D-fruktóz nyílt láncú és furanózgyűrűs projektív képletét!, 
-61. Rajzolja fel a D-ribóz nyílt láncú és furanózgyűrűs projektív képletét!, 
-62. Rajzolja fel a 2-dezoxi-D-ribóz nyílt láncú és furanózgyűrűs projektív képletét!, 
-63. Adja meg a β-D-glükopiranóz és az α-D-glükopiranóz Haworth-féle perspektivikus képleteit a glikozidos hidroxilcsoport megjelölésével!, 
-64. Írja fel projektív képletekkel a glükóz mutarotációs egyensúlyának reakcióját!, 
-65. Írja fel projektív képletekkel a D-glükóz enyhe és erélyes oxidációját és nevezze meg a termékeket!, 
-66. Írja fel szerkezeti képletekkel egy O-glikozid képződésének egyenletét!, 
-67. Írja fel szerkezeti képletekkel egy N-glikozid képződésének egyenletét!, 
-68. Rajzolja fel a glükuronsav szerkezeti képletét és adja meg legfontosabb élettani szerepét!, Hidrofób xeno- és endobiotikumok vízoldhatóságának növelése ami segíti a kiválasztást 
-69. Adja meg a sziálsavak fogalmát (képletek nélkül) és biológiai szerepüket!, Monoszacharidok a neuraminsav acetilezett származékai fiziológiás pH-n negatív töltésűek.; Receptorok és egyéb felismerési folyamatokban részt vevő oligoszacharidok gyakori alkotóelemei. 
-70. Írja le a glikogén felépítését és szerkezeti sajátságait (képletek nélkül!, Elágazó láncú poliszacharid; D-glükóz egységek (α1→4) glikozidos kötésben; 8-12 glükóz egységenként (α1→6) elágazásokkal. 
-71. Jellemezze a glükózaminoglikánok felépítését szerkezeti sajátságai (képletek nélkül) és biológiai szerepüket!, Ismétlődő diszacharid egységekből álló nem elágazó láncú negatív töltésű heteropoliszacharidok.; Nagymértékben hidratált gélszerű szerkezetet hoznak létre. Az extracelluláris mátrix alkotói. 
-72. Mutassa be a bakteriális sejtfal felépítését vázlatosan (képletek nélkül)!, Az aminocukrokból felépülő nemelágazó heteropoliszacharid szálakat peptidhidak kapcsolják össze (peptidoglikán háló).; NAG: N-acetil-glükózamin; NAM: N-acetil-muraminsav; AA: aminosavak 
-73. Sorolja fel az elszappanosítható lipidek típusait!, Viaszok; trigliceridek; foszfogliceridek; szfingolipidek. 
-74. Sorolja fel az el nem szappanosítható lipidek típusait!, Eikozanoidok; terpenoidok; szteroidok 
-75. Adja meg a trigliceridek (triacil-glicerinek) általános képletét és biológiai szerepét!, R = hosszú láncú zsírsav; Tartalék tápanyagok hőszigetelést és mechanikai védelmet biztosítanak. 
-76. Rajzolja fel a foszfatidsav általános képletét!, R = hosszú láncú zsírsav
-77. Adja meg a foszfogliceridek általános szerkezeti sajátságait és biológiai szerepét!, A glicerin hosszú szénláncú zsízsavakkal és foszforsavval alkotott észterei melyhez további hidrofil részek kapcsolódnak észterkötéssel. Amfipatikus szerkezetűek membránalkotók. 
-78. Írja fel az arachidonsav szerkezeti képletét!,  
-79. Sorolja fel a szteroidok négy legfontosabb csoportját!, Szterinek; szteroid hormonok; epesavak; szteránvázas alkaloidok. 
-80. Rajzolja fel a koleszterin szerkezeti képletét és adja meg a szteránváz atomjainak számozását!, 
-81. Adja meg a prosztaglandinok általános szerkezeti sajátságait és biológiai szerepüket!, Szubsztituált ciklopentán-gyűrűt tartalmazó 20 szénatomos karbonsavak. Parakrin hormonok. 
-82. Írja fel nevekkel vázlatosan a prosztaglandinok és tromboxánok szintézisét és nevezze meg a kulcsenzimet!, arachidonsav + 2 O2 → → → prosztaglandinok → → → tromboxánok ciklooxigenáz enzim 
-83. Írj fel nevekkel vázlatosan a leukotriének szintézisét és nevezze meg a kulcsenzimet!, arachidonsav + O2 → → → leukotriének lipoxigenáz enzim 
-84. Jellemezze a retinoidok szerkezetét és adja meg élettani jelentőségüket!, Hidrofób (zsíroldható) diterpenoidok. Retinol (alkohol) = A vitamin; a retinal (aldehid) a fényérzékelésben játszik szerepet; a retinsav hormon. 
-85. Jellemezze a membránok szerkezetét. Nevezze meg a fő alkotóelemeit!, Aszimmetrikus összetételű foszfolipid kettősréteg; koleszterin; fehérjék. 
-86. Sorolja fel a csatornák jellemzőit!, specifikus; nincs konformáció változás; nem telíthető; a sebesség eléri a gátolatlan diffúzióét; elektrokémiai grádiens mentén történik a vándorlás 
-87. Sorolja fel a transzporterek jellemzőit!, specifikusak; enzimekre jellemző kinetika; konformáció változás; telíthető
-88. Csoportosítsa a transzport folyamatokat!, passzív transzportok ( egyszerű diffúzió és facilitált diffúzió); aktív transzportok ( elsődleges aktív transzport és másodlagos aktív transzport)
-89. Sorolja fel az ATP-ázok csoportjait!, -P-típusú ATP-ázok; -F-Típusú ATP-ázok; -V- Típusú ATP-ázok; -ABC-transzporterek 
-90. Ismertesse röviden a centrális dogmát, az információáramlás lehetséges útjainak felrajzolásával és megnevezésével!, 
-91. Sorolja fel a DNS replikáció jellemző tulajdonságait!, Szemikonervatív; kétirányú; szemidiszkontinuus; templát; és primer függő 
-92. Adja meg a proofreading fogalmát a replikációban!, A hibásan beépített bázis felismerése majd kihasítása 3’-5’ exonukleás aktivitással a polimerizáció folytatása előtt.
-93. Adja meg a processzivitás fogalmát!, A DNS polimeráz disszociációja előtt hozzáadott nukleotidok átlagos száma. 
-94. Sorolja fel a DNS-javítási mechamizmusok típusait!, Mismatch repair; báziskivágásos javítás; nukleotidkivágásos javítás; direkt repair
-95. Írja fel képletekkel a poli(ADP-ribóz)-polimeráz (PARP) által katalizált reakciót!, 
-96. Sorolja fel a RNS éréséhez kapcsolódó folyamatokat!, CAP (sapka) szintézise; Poli(A) farok készítése; Splicing; Editing
-97. Definiálja a ribozim fogalmát. Adjon rá egy példát!, A katalitikus aktivitású ribonukleinsav molekulák; pl. peptidil transzferáz riboszóma nagy alegység
-98. Sorolja fel a a genetikai kód jellemzőit!, degenerált; nem átfedő; konzervált/konzervatív; univerzális
-99. Definiálja mit jelent a „lötyögés” (wobble) hipotézis!, A kodon első két bázisa mindig erősen kötődik az antikodonhoz. A „lötyögés” (wobble) a kodon 3' végén lévő bázis és az antikodon 5' végén lévő bázis közötti nem komplementer bázispárosodás lehetősége amely biztosítja a folyamat pontossága és sebessége közötti optimalizálást.
-100. Írja fel nevekkel az aminosavak aktiválásának egyenletét!, 
+2.01. Adja meg a karbamid és a guanidin szerkezeti képletét!, 
+2.02. Írja fel szerkezeti képlettel a karbamoil-foszfát-szintetáz I reakciót!, 
+2.03. Adja meg a kreatin és a kreatin-foszfát (foszfokreatin) szerkezeti képletét!, 
+2.04. Írja fel szerkezeti képletekkel a kreatin-kináz által katalizált reakciót!, 
+2.05. Adja meg a kreatinin szerkezeti képletét és legfontosabb orvosi jelentőségét!, 
+2.06. Írja fel egy laktám képződésének reakcióegyenletét szerkezeti képletekkel!, 
+2.07. Rajzolja fel a pirrol és az imidazol szerkezeti képletét!, 
+2.8. Rajzolja fel a piridin és a pirimidin szerkezeti képletét és jellemezze sav-bázis tulajdonságaikat!, 
+2.09. Adja meg a purin szerkezeti képletét a gyűrűben lévő atomok számozásával!, 
+2.10. Rajzolja le a nikotinamid és az indol szerkezeti képletét!, 
+2.11. Rajzolja le a húgysav szerkezeti képletét és adja meg legfontosabb élettani jelentőségét!, Emberben a húgysav a purinmetabolizmus végterméke. 
+2.12. Adja meg az alkaloidok definícióját!, Az alkaloidok természetben előforduló; többnyire bázikus nitrogénatomot tartalmazó; erős élettani hatással bíró vegyületek. 
+2.13. Rajzolja fel három nagyenergiájú kötést tartalmazó vegyület szerkezeti képletét. Jelölje meg bennük és nevezze meg a nagyenergiájú kötés típusát!, 
+2.14. Adja meg az alábbi vegyületek (NAD+ FAD CoA-SH ATP) teljes nevét és biológia szerepét!, NAD+: nikotinamid-adenin-dinukleotid oxidálószer koenzim; FAD: flavin-adenin-dinukleotid oxidálószer prosztetikus csoport; CoA-SH: koenzim-A acil-csoport szállítása; ATP: adenozin-trifoszfát: foszforilezőszer (foszforil-csoport donor) energiatárolás 
+2.15. Rajzolja fel a citozin és a timin szerkezeti képletét!,     
+2.16. Írja fel képletekkel az uracil tautomériáját!, 
+2.17. Adja meg az adenin és a guanin szerkezeti képletét!, 
+2.18. Sorolja fel a DNS és RNS szerkezete közötti különbségeket (min. 3)?, DNS: 2-dezoxi-ribóz csak négyféle bázis (A G C T) purinbázisok száma = a pirimidinbázisok sz. sokkal több nukleotidból áll. általában kettős szálú; RNS: ribóz uracil a timin helyett és ún. ritka bázisok a purin- és pirimidin-bázisok aránya tetszőleges rövidebb polimer ált. egy szálból áll 
+2.19. Írja fel az α-aminosavak általános képletét nemionos és ikerionos formában!, 
+2.20. Adja meg a glicin és az L-alanin szerkezeti képletét!, 
+2.21. Adja meg az L-valin és az L-leucin szerkezeti képletét!, 
+2.22. Adja meg az L-tirozin és az L-fenil-alanin szerkezeti képletét!, 
+2.23. Adja meg az L-metionin és az L-cisztein szerkezeti képletét!, 
+2.24. Adja meg az L-szerin és az L-treonin szerkezeti képletét!, 
+2.25. Adja meg az L-aszpartát és az L-glutamát szerkezeti képletét!, 
+2.26. Adja meg az L-aszparagin és az L-glutamin szerkezeti képletét!, 
+2.27. Adja meg az L-lizin és az L-arginin szerkezeti képletét!, 
+2.28. Adja meg az L-triptofán és az L-hisztidin szerkezeti képletét!, 
+2.29. Adja meg az L-prolin és az L-izoleucin szerkezeti képletét!, 
+2.30. Definiálja az aminosavak izoelektromos pontjának fogalmát!, Azt a pH-t amelyen az aminosav össztöltése 0 izoelektromos pH-nak vagy izoelektromos pontnak nevezzük (pI). 
+2.31. Írja fel általános szerkezeti képletekkel a peptidkötés kialakulásának reakcióegyenletét!, 
+2.32. Adja meg az alanil-glicin dipeptid szerkezeti képletét!, 
+2.33. Adja meg a glicil-alanin dipeptid szerkezeti képletét!, 
+2.34. Rajzolja fel a redukált glutation szerkezeti képletét. Karikázza be a képleten hogy a molekula mely részletének köszönheti antioxidáns hatását!, 
+2.35. Adja meg a fehérjék másodlagos szerkezetének definícióját!, A másodlagos szerkezet a polimer láncban a közeli aminosavak egymáshoz viszonyított elhelyezkedését adja meg pl.:; α-hélix; β-redő; β-kanyar. 
+2.36. Sorolja fel a fehérjék harmadlagos szerkezetének fenntartásáért felelős kölcsönhatások főbb típusait!, Hidrofób kölcsönhatások; hidrogén-kötés; ionos kötés; diszulfid-híd. 
+2.37. Írja fel a hemoglobin CO2 kötése során lejátszódó reakciót a hemoglobin megfelelő funkciós csoportjának szerkezeti képletét is feltüntetve!, 
+2.38. Írja fel a szénsavanhidráz reakciót!, 
+2.39. Definiálja a heterotrop modulátor fogalmát és adjon rá egy példát!, A heterotrop moduláció azt jelenti hogy egy a ligandumtól eltérő molekula hat alloszterikus modulátorként.; Ez a hatás lehet pozitív vagy negatív.; Például a hemoglobin negatív heretotrop modulátora a 2.3-biszfoszfoglicerát.; Ez csökkenti a hemoglobin oxigénhez való affinitását. 
+2.40. Definiálja a kooperativitás fogalmát és adjon rá egy példát!, Egy enzim vagy más fehérje jellemzője amelyben egy ligandum első molekulájának megkötése megváltoztatja az affinitást a második molekulához.; Pozitív kooperáció esetén a második ligandummolekula iránti affinitás nő negatív kooperációban csökken.; Például hemoglobin és oxigén pozitív kooperativitás. 
+2.41. Írja fel az enzimműködés Michaelis-Menten szerinti modelljét reakcióegyenletekkel!, Jelölje meg a sebességmeghatározó lépést!, 
+2.42. Írja fel a Michaelis-Menten egyenletet a jelölések értelmezésével!, V0 = Vmax [S] /(KM + [S]); V0 = kezdeti reakciósebesség; Vmax = maximális reakciósebesség; [S] = szubsztrátkoncentráció (M); KM = Michaelis-Menten állandó 
+2.43. Adja meg az enzimaktivitás definícióját és két leggyakoribb mértékegységét!, Egy enzim aktivitása az enzim által egységnyi idő alatt átalakított szubsztrát anyagmennyiségét jelenti.; Egységei: unit (U): μmol/min; katal: mol/s 
+2.44. Definiálja a KM (Michaelis-Menten) állandót. Az enzim mely tulajdonságát jellemzi ez a szám!, A KM az a szubsztrátkoncentráció (mol/dm3) amely mellett a katalizált reakció a maximális sebesség (Vmax) felével játszódik le.; A reakciót katalizáló fehérje szubsztráthoz való affinitását mutatja meg. 
+2.45. Mit jelent az enzimaktivitás alloszterikus módosítása?, Az enzim és a szabályozó molekula közötti nemkovalens kapcsolat az enzim specifikus szabályzóhelyén (allosztérikus kötőhely) mely az enzim konformációjának és ez által az aktivitásának megváltozásához vezet. 
+2.46. Mit jelent az enzimaktivitás kovalens módosítása?, Az enzim reverzibilis kovalens poszt-transzlációs módosítása mely az enzimaktivitás megváltozásához vezet. 
+2.47. Írja fel szerkezeti képletekkel a hexokináz által katalizált reakciót!, 
+2.48. Írja fel szerkezeti képletekkel a foszfohexóz-izomeráz által katalizált reakciót!, 
+2.49. Írja fel szerkezeti képletekkel a foszfofruktokináz-1 által katalizált reakciót!, 
+2.50. Írja fel szerkezeti képletekkel az aldoláz által katalizált reakciót!, 
+2.51. Írja fel szerkezeti képletekkel a glicerinaldehid-3-foszfát-dehidrogenáz által katalizált reakciót!, 
+2.52. Írja fel szerkezeti képletekkel a foszfoglicerát-mutáz által katalizált reakciót!, 
+2.53. Írja fel szerkezeti képletekkel a laktát-dehidrogenáz által katalizált reakciót!, 
+2.54. Írja fel szerkezeti képletekkel a citrát-szintáz által katalizált reakciót!, 
+2.55. Írja fel szerkezeti képletekkel a szukcinil-CoA-szintetáz (más néven szukcinát-tiokináz) által katalizált reakciót!, 
+2.56. Írja fel szerkezeti képletekkel a szukcinát-dehidrogenáz által katalizált reakciót!, 
+2.57. Adja meg egy aldotrióz és egy ketotrióz szerkezeti képletét és nevét!, 
+2.58. Rajzolja fel a nyílt láncú D-glükóz Fischer-féle projektív képletét a D konfigurációt mutató C-atom megjelölésével!, 
+2.59. Definiálja az epimerek fogalmát!, Az epimerek olyan diasztereomerek melyek konfigurációja csak egy C-atomon különbözik. 
+2.60. Rajzolja fel a D-fruktóz nyílt láncú és furanózgyűrűs projektív képletét!, 
+2.61. Rajzolja fel a D-ribóz nyílt láncú és furanózgyűrűs projektív képletét!, 
+2.62. Rajzolja fel a 2-dezoxi-D-ribóz nyílt láncú és furanózgyűrűs projektív képletét!, 
+2.63. Adja meg a β-D-glükopiranóz és az α-D-glükopiranóz Haworth-féle perspektivikus képleteit a glikozidos hidroxilcsoport megjelölésével!, 
+2.64. Írja fel projektív képletekkel a glükóz mutarotációs egyensúlyának reakcióját!, 
+2.65. Írja fel projektív képletekkel a D-glükóz enyhe és erélyes oxidációját és nevezze meg a termékeket!, 
+2.66. Írja fel szerkezeti képletekkel egy O-glikozid képződésének egyenletét!, 
+2.67. Írja fel szerkezeti képletekkel egy N-glikozid képződésének egyenletét!, 
+2.68. Rajzolja fel a glükuronsav szerkezeti képletét és adja meg legfontosabb élettani szerepét!, Hidrofób xeno- és endobiotikumok vízoldhatóságának növelése ami segíti a kiválasztást 
+2.69. Adja meg a sziálsavak fogalmát (képletek nélkül) és biológiai szerepüket!, Monoszacharidok a neuraminsav acetilezett származékai fiziológiás pH-n negatív töltésűek.; Receptorok és egyéb felismerési folyamatokban részt vevő oligoszacharidok gyakori alkotóelemei. 
+2.70. Írja le a glikogén felépítését és szerkezeti sajátságait (képletek nélkül!, Elágazó láncú poliszacharid; D-glükóz egységek (α1→4) glikozidos kötésben; 8-12 glükóz egységenként (α1→6) elágazásokkal. 
+2.71. Jellemezze a glükózaminoglikánok felépítését szerkezeti sajátságai (képletek nélkül) és biológiai szerepüket!, Ismétlődő diszacharid egységekből álló nem elágazó láncú negatív töltésű heteropoliszacharidok.; Nagymértékben hidratált gélszerű szerkezetet hoznak létre. Az extracelluláris mátrix alkotói. 
+2.72. Mutassa be a bakteriális sejtfal felépítését vázlatosan (képletek nélkül)!, Az aminocukrokból felépülő nemelágazó heteropoliszacharid szálakat peptidhidak kapcsolják össze (peptidoglikán háló).; NAG: N-acetil-glükózamin; NAM: N-acetil-muraminsav; AA: aminosavak 
+2.73. Sorolja fel az elszappanosítható lipidek típusait!, Viaszok; trigliceridek; foszfogliceridek; szfingolipidek. 
+2.74. Sorolja fel az el nem szappanosítható lipidek típusait!, Eikozanoidok; terpenoidok; szteroidok 
+2.75. Adja meg a trigliceridek (triacil-glicerinek) általános képletét és biológiai szerepét!, R = hosszú láncú zsírsav; Tartalék tápanyagok hőszigetelést és mechanikai védelmet biztosítanak. 
+2.76. Rajzolja fel a foszfatidsav általános képletét!, R = hosszú láncú zsírsav
+2.77. Adja meg a foszfogliceridek általános szerkezeti sajátságait és biológiai szerepét!, A glicerin hosszú szénláncú zsízsavakkal és foszforsavval alkotott észterei melyhez további hidrofil részek kapcsolódnak észterkötéssel. Amfipatikus szerkezetűek membránalkotók. 
+2.78. Írja fel az arachidonsav szerkezeti képletét!,  
+2.79. Sorolja fel a szteroidok négy legfontosabb csoportját!, Szterinek; szteroid hormonok; epesavak; szteránvázas alkaloidok. 
+2.80. Rajzolja fel a koleszterin szerkezeti képletét és adja meg a szteránváz atomjainak számozását!, 
+2.81. Adja meg a prosztaglandinok általános szerkezeti sajátságait és biológiai szerepüket!, Szubsztituált ciklopentán-gyűrűt tartalmazó 20 szénatomos karbonsavak. Parakrin hormonok. 
+2.82. Írja fel nevekkel vázlatosan a prosztaglandinok és tromboxánok szintézisét és nevezze meg a kulcsenzimet!, arachidonsav + 2 O2 → → → prosztaglandinok → → → tromboxánok ciklooxigenáz enzim 
+2.83. Írj fel nevekkel vázlatosan a leukotriének szintézisét és nevezze meg a kulcsenzimet!, arachidonsav + O2 → → → leukotriének lipoxigenáz enzim 
+2.84. Jellemezze a retinoidok szerkezetét és adja meg élettani jelentőségüket!, Hidrofób (zsíroldható) diterpenoidok. Retinol (alkohol) = A vitamin; a retinal (aldehid) a fényérzékelésben játszik szerepet; a retinsav hormon. 
+2.85. Jellemezze a membránok szerkezetét. Nevezze meg a fő alkotóelemeit!, Aszimmetrikus összetételű foszfolipid kettősréteg; koleszterin; fehérjék. 
+2.86. Sorolja fel a csatornák jellemzőit!, specifikus; nincs konformáció változás; nem telíthető; a sebesség eléri a gátolatlan diffúzióét; elektrokémiai grádiens mentén történik a vándorlás 
+2.87. Sorolja fel a transzporterek jellemzőit!, specifikusak; enzimekre jellemző kinetika; konformáció változás; telíthető
+2.88. Csoportosítsa a transzport folyamatokat!, passzív transzportok ( egyszerű diffúzió és facilitált diffúzió); aktív transzportok ( elsődleges aktív transzport és másodlagos aktív transzport)
+2.89. Sorolja fel az ATP-ázok csoportjait!, -P-típusú ATP-ázok; -F-Típusú ATP-ázok; -V- Típusú ATP-ázok; -ABC-transzporterek 
+2.90. Ismertesse röviden a centrális dogmát, az információáramlás lehetséges útjainak felrajzolásával és megnevezésével!, 
+2.91. Sorolja fel a DNS replikáció jellemző tulajdonságait!, Szemikonervatív; kétirányú; szemidiszkontinuus; templát; és primer függő 
+2.92. Adja meg a proofreading fogalmát a replikációban!, A hibásan beépített bázis felismerése majd kihasítása 3’-5’ exonukleás aktivitással a polimerizáció folytatása előtt.
+2.93. Adja meg a processzivitás fogalmát!, A DNS polimeráz disszociációja előtt hozzáadott nukleotidok átlagos száma. 
+2.94. Sorolja fel a DNS-javítási mechamizmusok típusait!, Mismatch repair; báziskivágásos javítás; nukleotidkivágásos javítás; direkt repair
+2.95. Írja fel képletekkel a poli(ADP-ribóz)-polimeráz (PARP) által katalizált reakciót!, 
+2.96. Sorolja fel a RNS éréséhez kapcsolódó folyamatokat!, CAP (sapka) szintézise; Poli(A) farok készítése; Splicing; Editing
+2.97. Definiálja a ribozim fogalmát. Adjon rá egy példát!, A katalitikus aktivitású ribonukleinsav molekulák; pl. peptidil transzferáz riboszóma nagy alegység
+2.98. Sorolja fel a a genetikai kód jellemzőit!, degenerált; nem átfedő; konzervált/konzervatív; univerzális
+2.99. Definiálja mit jelent a „lötyögés” (wobble) hipotézis!, A kodon első két bázisa mindig erősen kötődik az antikodonhoz. A „lötyögés” (wobble) a kodon 3' végén lévő bázis és az antikodon 5' végén lévő bázis közötti nem komplementer bázispárosodás lehetősége amely biztosítja a folyamat pontossága és sebessége közötti optimalizálást.
+2.100. Írja fel nevekkel az aminosavak aktiválásának egyenletét!, 
