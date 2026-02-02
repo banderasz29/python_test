@@ -59,9 +59,7 @@ streamlit-test_pi/
 
 # Specific DB files
 webshop.db
-
-# Biofizika specific
-*.png
+*.csv
 *.html
 *.ttf
 biofizika/DejaVu Fonts License.txt
