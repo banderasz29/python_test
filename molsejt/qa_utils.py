@@ -3,7 +3,6 @@ import csv
 import re
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
-import random
 import math
 
 
@@ -141,15 +140,15 @@ def beolvas_csv_dict(filename: str) -> Dict[str, List[str]]:
 
 
 def valassz_kerdeseket(qa: Dict[str, List[str]], n: int = 12) -> List[str]:
-    """Véletlenszerűen kiválaszt n egyedi kérdést."""
+    """A CSV-ben szereplő eredeti sorrendben kiválasztja az első n egyedi kérdést."""
     if n > len(qa):
         raise ValueError(
             "Nagyobb számot adtál meg, mint ahány kérdés rendelkezésre áll."
         )
-    return random.sample(list(qa.keys()), n)
+    return list(qa.keys())[:n]
 
 
-# --- ÚJ: forrás kiválasztása és kevert mintavétel (1., 2. félév, szigorlat) ---
+# --- Forrás kiválasztása és sorrendi kérdéskiválasztás (1., 2. félév, szigorlat) ---
 
 
 def _osszefesul_qa(*qadictok: Dict[str, List[str]]) -> Dict[str, List[str]]:
@@ -183,21 +182,21 @@ def valassz_forras_es_kerdesek(
     seed: int | None = None,
 ) -> Tuple[List[str], Dict[str, List[str]]]:
     """
-    Választási lehetőség a random kérdések generálása előtt.
+    Választási lehetőség a kérdések sorrendi betöltése előtt.
 
     mod:
       - "1": 1. félév -> csak fajl_1
       - "2": 2. félév -> csak fajl_2
       - "3" vagy "szigorlat": mindkettő -> 50-50% mintavétel
 
-    n: összes kérdés darabszám, amelyet véletlenszerűen visszaadunk.
-    seed: opcionális véletlenszám-mag reprodukálhatósághoz.
+    n: összes kérdés darabszám, amelyet a CSV eredeti sorrendjében visszaadunk.
+    seed: kompatibilitási okból megmaradt paraméter; sorrendi módban nincs hatása.
 
     Visszatérés:
       (kiválasztott_kérdések_listája, teljes_forrás_qa_dict)
     """
-    if seed is not None:
-        random.seed(seed)
+    # A seed paraméter kompatibilitási okból megmaradt, de a kérdések most már nem random módon,
+    # hanem a CSV-fájlokban szereplő eredeti sorrendben jelennek meg.
 
     mod_norm = (mod or "").strip().lower()
     if mod_norm not in {"1", "2", "3", "szigorlat"}:
@@ -240,7 +239,6 @@ def valassz_forras_es_kerdesek(
     kerd1 = valassz_kerdeseket(qa1, n1)
     kerd2 = valassz_kerdeseket(qa2, n2)
     kivalasztott = kerd1 + kerd2
-    random.shuffle(kivalasztott)
 
     # Teljes QA-t is visszaadjuk (egyesítve), hogy a kérdéshez tartozó válaszok elérhetők legyenek
     qa_egyesitett = _osszefesul_qa(qa1, qa2)
@@ -249,7 +247,7 @@ def valassz_forras_es_kerdesek(
 
 # --- Opcionális: egyszerű interaktív CLI futtatás (ha közvetlenül futtatod a fájlt) ---
 if __name__ == "__main__":
-    print("Válassz módot a random kérdések generálása előtt:")
+    print("Válassz módot a kérdések sorrendi betöltése előtt:")
     print("  1 = 1. félév")
     print("  2 = 2. félév")
     print("  3 = szigorlat (50–50% mindkettőből)")
