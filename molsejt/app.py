@@ -5,6 +5,7 @@ import json
 import io
 import csv
 import os
+import re
 import streamlit as st
 
 # Kérdésválogatás és CSV beolvasás – győződj meg róla, hogy qa_utils.py ugyanebben a mappában van.
@@ -15,11 +16,11 @@ from qa_utils import valassz_forras_es_kerdesek
 APP_DIR: Path = Path(__file__).parent.resolve()
 
 # Fix paraméterek
-THRESHOLD: int = 12  # ennyi kérdés generálódik minden módban
+THRESHOLD: int = 12  # ennyi kérdés töltődik be minden módban
 PASS_MIN: int = 9  # legalább ennyi helyes kell a sikerhez (12-ből 9)
 FAJL_1: Path = APP_DIR / "kerdes_valaszok.csv"  # 1. félév
 FAJL_2: Path = APP_DIR / "kerdes_valaszok2.csv"  # 2. félév
-SEED: Optional[int] = None  # pl. 42 a reprodukálhatósághoz, különben None
+SEED: Optional[int] = None  # kompatibilitási okból megmaradt; sorrendi módban nincs hatása
 
 st.set_page_config(
     page_title="Molekuláris sejtbiológia – minimum kérdések teszt",
@@ -27,7 +28,7 @@ st.set_page_config(
     layout="wide",
 )
 
-# Oldalsáv – csak vizsgatípus + generálás
+# Oldalsáv – csak vizsgatípus + betöltés
 st.sidebar.header("Beállítás")
 mod = st.sidebar.selectbox(
     "Vizsga típusa",
@@ -38,7 +39,8 @@ mod = st.sidebar.selectbox(
         "szigorlat": "3. szigorlat (50–50%)",
     }[x],
 )
-start = st.sidebar.button("🎯 Generálás / újrakeverés")
+start = st.sidebar.button("🎯 Betöltés / újrakezdés")
+st.sidebar.caption("A kérdések nem véletlenszerűen, hanem a CSV-fájlok eredeti sorrendjében jelennek meg.")
 
 # Diagnosztika – lásd, honnan fut és mit lát
 with st.sidebar.expander("Diagnosztika", expanded=False):
@@ -67,10 +69,26 @@ if "itel" not in st.session_state:
     st.session_state.itel = {}  # Dict[str, Optional[str]]
 if "osszegzes" not in st.session_state:
     st.session_state.osszegzes = None  # Optional[Dict[str, object]]
+if "source_key" not in st.session_state:
+    st.session_state.source_key = None
 
 
 # ─────────────────────────────────────────────────────────
-# Generálás
+# Betöltés
+MODE_LABELS = {
+    "1": "1. félév",
+    "2": "2. félév",
+    "szigorlat": "3. szigorlat (50–50%)",
+}
+
+
+def current_source_key() -> str:
+    """A beállításokból és CSV-időbélyegekből stabil kulcsot képez az automatikus újratöltéshez."""
+    fajl_1_mtime = FAJL_1.stat().st_mtime if FAJL_1.exists() else "missing"
+    fajl_2_mtime = FAJL_2.stat().st_mtime if FAJL_2.exists() else "missing"
+    return f"{mod}|{THRESHOLD}|{fajl_1_mtime}|{fajl_2_mtime}"
+
+
 def generalj() -> None:
     # Előzetes ellenőrzés – egyértelmű üzenet a hiányzó fájlokra
     missing = []
@@ -102,24 +120,27 @@ def generalj() -> None:
         st.session_state.show_answer = {k: False for k in kerdesek}
         st.session_state.itel = {k: None for k in kerdesek}
         st.session_state.osszegzes = None
+        st.session_state.source_key = current_source_key()
 
 
-# Első betöltéskor, vagy gombnyomásra töltsünk
-if start or not st.session_state.kerdesek:
+# Első betöltéskor, gombnyomásra vagy vizsgatípus/CSV-változáskor töltsünk újra
+source_key = current_source_key()
+if start or not st.session_state.kerdesek or st.session_state.source_key != source_key:
     generalj()
 
 # ─────────────────────────────────────────────────────────
 # Fejléc és státusz
 st.title("🧬 Molekuláris sejtbiológia – minimum kérdések teszt")
 st.caption(
-    f"Egyszerre látszik minden kérdés. Mód: **{{'1':'1. félév','2':'2. félév','szigorlat':'3. szigorlat (50–50%)'}}[mod]** • "
-    f"Kérdések száma: **{THRESHOLD}** • Sikeresség feltétele: **legalább {PASS_MIN} helyes**."
+    f"Egyszerre látszik minden kérdés. Mód: **{MODE_LABELS[mod]}** • "
+    f"Kérdések száma: **{THRESHOLD}** • Sikeresség feltétele: **legalább {PASS_MIN} helyes**. "
+    "A kérdések a forrásfájlok eredeti sorrendjét követik."
 )
 
 # Ha valamiért még sincs kérdés (pl. stop után), álljunk meg szépen
 if not st.session_state.kerdesek:
     st.info(
-        "Nincs betölthető kérdés. Ellenőrizd a CSV fájlokat, majd kattints a Generálás gombra."
+        "Nincs betölthető kérdés. Ellenőrizd a CSV fájlokat, majd kattints a Betöltés gombra."
     )
     st.stop()
 
@@ -140,7 +161,7 @@ with c3:
     st.metric("Helyesnek jelölt", helyes_db)
 with c4:
     st.button(
-        "🔁 Újrakeverés (ugyanennyi kérdés)",
+        "🔁 Újrakezdés azonos sorrenddel",
         on_click=generalj,
         use_container_width=True,
     )
@@ -149,7 +170,7 @@ st.divider()
 
 
 # ─────────────────────────────────────────────────────────
-# Válaszok formázott megjelenítése
+# Válaszok és rövid magyarázatok formázott megjelenítése
 def show_answers_markdown(ans_list: List[str]) -> None:
     if not ans_list:
         st.caption("(Nincs válasz rögzítve)")
@@ -161,6 +182,40 @@ def show_answers_markdown(ans_list: List[str]) -> None:
             st.code(text)
         else:
             st.markdown(f"**{i})** {text}")
+
+
+def compact_answer_text(ans_list: List[str]) -> str:
+    cleaned = [re.sub(r"\s+", " ", str(a)).strip(" ;") for a in ans_list if str(a).strip()]
+    return "; ".join(cleaned)
+
+
+def short_explanation(question: str, ans_list: List[str]) -> str:
+    """Rövid, tanulást segítő magyarázatot készít a rendelkezésre álló válaszokból."""
+    cleaned = [re.sub(r"\s+", " ", str(a)).strip(" ;") for a in ans_list if str(a).strip()]
+    if not cleaned:
+        return "Ehhez a kérdéshez nincs külön magyarázat rögzítve, ezért a tanulásnál a kérdés megfogalmazásából indulj ki."
+
+    if len(cleaned) == 1:
+        answer_summary = cleaned[0]
+        return (
+            f"A válasz lényege: {answer_summary}. Tanuláskor ezt a kulcsállítást kapcsold össze "
+            "a kérdésben szereplő fogalommal, mert a minimumkérdések általában a pontos definíciót, "
+            "helyet, funkciót vagy fő példát kérik számon."
+        )
+
+    answer_summary = "; ".join(cleaned[:3])
+    if len(cleaned) > 3:
+        answer_summary += "; …"
+    return (
+        f"A felsorolt elemek a válasz kulcspontjai: {answer_summary}. A kérdés megoldásához elég, ha "
+        "a fő fogalmakat és azok kapcsolatát jegyzed meg; több elfogadható válasz esetén ezek gyakran "
+        "alternatív példák vagy egymást kiegészítő részletek."
+    )
+
+
+def show_explanation(question: str, ans_list: List[str]) -> None:
+    st.markdown("**Rövid magyarázat:**")
+    st.info(short_explanation(question, ans_list))
 
 
 # ─────────────────────────────────────────────────────────
@@ -191,8 +246,10 @@ for sorszam, k in enumerate(kerdesek, start=1):
         )
     with cB:
         if show_answer.get(k, False):
+            answers = qa.get(k, [])
             st.success("Elfogadható válasz(ok):")
-            show_answers_markdown(qa.get(k, []))
+            show_answers_markdown(answers)
+            show_explanation(k, answers)
 
             current = itel.get(k)
             radio_idx = 0 if (current is None or current == "helyes") else 1
@@ -235,12 +292,19 @@ if st.session_state.osszegzes is not None:
     # Eredmény export (JSON)
     export = {
         "kor_id": "session",
+        "mod": MODE_LABELS[mod],
+        "sorrend": "CSV eredeti sorrendje",
         "kerdesek_szama": len(kerdesek),
         "minimum_helyes": PASS_MIN,
         "helyes_db": helyes,
         "sikeres": sikeres,
         "reszletek": [
-            {"kerdes": k, "elfogadhato_valaszok": qa.get(k, []), "itel": itel.get(k)}
+            {
+                "kerdes": k,
+                "elfogadhato_valaszok": qa.get(k, []),
+                "magyarazat": short_explanation(k, qa.get(k, [])),
+                "itel": itel.get(k),
+            }
             for k in kerdesek
         ],
     }
@@ -255,12 +319,13 @@ if st.session_state.osszegzes is not None:
 # CSV export
 buf = io.StringIO()
 w = csv.writer(buf)
-w.writerow(["index", "question", "mark", "answers"])
+w.writerow(["index", "question", "mark", "answers", "explanation"])
 for i, kk in enumerate(kerdesek, 1):
     mark = itel.get(kk)
     mark_str = "" if mark is None else ("correct" if mark == "helyes" else "wrong")
-    joined = " | ".join(str(a).replace("\n", " ") for a in qa.get(kk, []))
-    w.writerow([i, kk, mark_str, joined])
+    answers = qa.get(kk, [])
+    joined = " | ".join(str(a).replace("\n", " ") for a in answers)
+    w.writerow([i, kk, mark_str, joined, short_explanation(kk, answers)])
 st.download_button(
     label="⬇️ Eredmények letöltése (CSV)",
     data=buf.getvalue(),
