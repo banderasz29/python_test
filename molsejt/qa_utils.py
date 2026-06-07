@@ -4,6 +4,10 @@ import re
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
 import math
+import random
+
+
+SelectionResult = Tuple[List[str], Dict[str, List[str]], Dict[str, int]]
 
 
 def _detect_csv_dialect(path: Path) -> Optional[csv.Dialect]:
@@ -120,7 +124,7 @@ def beolvas_csv_dict(filename: str) -> Dict[str, List[str]]:
         if not question:
             continue
         answers = _answers_from_cell(answer_raw)
-        # duplikált kérdések esetén egyesítjük az egyedi válaszokat
+        # Duplikált kérdések esetén egyesítjük az egyedi válaszokat, az első előfordulás sorrendjét megtartva.
         if question in qa:
             merged = qa[question] + answers
             seen = set()
@@ -139,16 +143,42 @@ def beolvas_csv_dict(filename: str) -> Dict[str, List[str]]:
     return qa
 
 
-def valassz_kerdeseket(qa: Dict[str, List[str]], n: int = 12) -> List[str]:
-    """A CSV-ben szereplő eredeti sorrendben kiválasztja az első n egyedi kérdést."""
+def _circular_slice(items: List[str], n: int, start_index: int = 0) -> Tuple[List[str], int]:
+    """Körbeforduló szeletet ad vissza, majd kiszámolja a következő kezdőpozíciót."""
+    if n <= 0:
+        raise ValueError("Az n legyen pozitív egész.")
+    if not items:
+        raise ValueError("Nincs elérhető kérdés.")
+    if n > len(items):
+        raise ValueError("Nagyobb számot adtál meg, mint ahány kérdés rendelkezésre áll.")
+
+    start = start_index % len(items)
+    selected = [items[(start + i) % len(items)] for i in range(n)]
+    next_index = (start + n) % len(items)
+    return selected, next_index
+
+
+def valassz_kerdeseket(
+    qa: Dict[str, List[str]],
+    n: int = 12,
+    *,
+    start_index: int = 0,
+    randomize: bool = False,
+    seed: int | None = None,
+) -> Tuple[List[str], int]:
+    """Kiválaszt n kérdést véletlenszerűen vagy a CSV-sorrend szerinti következő blokkból."""
     if n > len(qa):
-        raise ValueError(
-            "Nagyobb számot adtál meg, mint ahány kérdés rendelkezésre áll."
-        )
-    return list(qa.keys())[:n]
+        raise ValueError("Nagyobb számot adtál meg, mint ahány kérdés rendelkezésre áll.")
+
+    questions = list(qa.keys())
+    if randomize:
+        rnd = random.Random(seed)
+        return rnd.sample(questions, n), start_index % len(questions)
+
+    return _circular_slice(questions, n, start_index=start_index)
 
 
-# --- Forrás kiválasztása és sorrendi kérdéskiválasztás (1., 2. félév, szigorlat) ---
+# --- Forrás kiválasztása: véletlen mód vagy következő sorrendi kérdésblokk ---
 
 
 def _osszefesul_qa(*qadictok: Dict[str, List[str]]) -> Dict[str, List[str]]:
@@ -180,74 +210,77 @@ def valassz_forras_es_kerdesek(
     fajl_1: str = "kerdes_valaszok.csv",
     fajl_2: str = "kerdes_valaszok2.csv",
     seed: int | None = None,
-) -> Tuple[List[str], Dict[str, List[str]]]:
+    selection_mode: str = "next",
+    start_index_1: int = 0,
+    start_index_2: int = 0,
+) -> SelectionResult:
     """
-    Választási lehetőség a kérdések sorrendi betöltése előtt.
+    Kérdések kiválasztása vizsgatípus és betöltési mód alapján.
 
     mod:
       - "1": 1. félév -> csak fajl_1
       - "2": 2. félév -> csak fajl_2
       - "3" vagy "szigorlat": mindkettő -> 50-50% mintavétel
 
-    n: összes kérdés darabszám, amelyet a CSV eredeti sorrendjében visszaadunk.
-    seed: kompatibilitási okból megmaradt paraméter; sorrendi módban nincs hatása.
+    selection_mode:
+      - "next": a következő kérdésblokkot adja a CSV eredeti sorrendjében, körbefordulással
+      - "random": véletlenszerűen választ kérdéseket az adott vizsgatípus csoportból
 
     Visszatérés:
-      (kiválasztott_kérdések_listája, teljes_forrás_qa_dict)
+      (kiválasztott_kérdések_listája, teljes_forrás_qa_dict, következő_pozíciók)
     """
-    # A seed paraméter kompatibilitási okból megmaradt, de a kérdések most már nem random módon,
-    # hanem a CSV-fájlokban szereplő eredeti sorrendben jelennek meg.
-
     mod_norm = (mod or "").strip().lower()
     if mod_norm not in {"1", "2", "3", "szigorlat"}:
         raise ValueError("Érvénytelen mód. Használd: '1', '2' vagy '3/szigorlat'.")
 
+    if selection_mode not in {"next", "random"}:
+        raise ValueError("Érvénytelen kérdésbetöltési mód. Használd: 'next' vagy 'random'.")
+
     if n <= 0:
         raise ValueError("Az n legyen pozitív egész.")
 
+    randomize = selection_mode == "random"
+
     if mod_norm == "1":
         qa = beolvas_csv_dict(fajl_1)
-        if n > len(qa):
-            raise ValueError(
-                "Nagyobb n-t adtál meg, mint amennyi kérdés az 1. félévben van."
-            )
-        kerd = valassz_kerdeseket(qa, n)
-        return kerd, qa
+        kerd, next_1 = valassz_kerdeseket(
+            qa, n, start_index=start_index_1, randomize=randomize, seed=seed
+        )
+        return kerd, qa, {"start_index_1": next_1, "start_index_2": start_index_2}
 
     if mod_norm == "2":
         qa = beolvas_csv_dict(fajl_2)
-        if n > len(qa):
-            raise ValueError(
-                "Nagyobb n-t adtál meg, mint amennyi kérdés a 2. félévben van."
-            )
-        kerd = valassz_kerdeseket(qa, n)
-        return kerd, qa
+        kerd, next_2 = valassz_kerdeseket(
+            qa, n, start_index=start_index_2, randomize=randomize, seed=seed
+        )
+        return kerd, qa, {"start_index_1": start_index_1, "start_index_2": next_2}
 
-    # "3" vagy "szigorlat": 50-50% a két fájlból
+    # "3" vagy "szigorlat": 50-50% a két fájlból.
     qa1 = beolvas_csv_dict(fajl_1)
     qa2 = beolvas_csv_dict(fajl_2)
 
-    # 50-50%: páratlan n esetén +1 megy az első forrásra
     n1 = math.ceil(n / 2)
     n2 = n - n1
 
-    if n1 > len(qa1) or n2 > len(qa2):
-        raise ValueError(
-            f"Nem kérhető {n} kérdés 50–50%-ban: 1. félévben {len(qa1)}, 2. félévben {len(qa2)} elérhető."
-        )
+    kerd1, next_1 = valassz_kerdeseket(
+        qa1, n1, start_index=start_index_1, randomize=randomize, seed=seed
+    )
+    kerd2, next_2 = valassz_kerdeseket(
+        qa2, n2, start_index=start_index_2, randomize=randomize, seed=None if seed is None else seed + 1
+    )
 
-    kerd1 = valassz_kerdeseket(qa1, n1)
-    kerd2 = valassz_kerdeseket(qa2, n2)
     kivalasztott = kerd1 + kerd2
+    if randomize:
+        rnd = random.Random(None if seed is None else seed + 2)
+        rnd.shuffle(kivalasztott)
 
-    # Teljes QA-t is visszaadjuk (egyesítve), hogy a kérdéshez tartozó válaszok elérhetők legyenek
     qa_egyesitett = _osszefesul_qa(qa1, qa2)
-    return kivalasztott, qa_egyesitett
+    return kivalasztott, qa_egyesitett, {"start_index_1": next_1, "start_index_2": next_2}
 
 
 # --- Opcionális: egyszerű interaktív CLI futtatás (ha közvetlenül futtatod a fájlt) ---
 if __name__ == "__main__":
-    print("Válassz módot a kérdések sorrendi betöltése előtt:")
+    print("Válassz módot a kérdések betöltése előtt:")
     print("  1 = 1. félév")
     print("  2 = 2. félév")
     print("  3 = szigorlat (50–50% mindkettőből)")
@@ -256,7 +289,7 @@ if __name__ == "__main__":
     try:
         n_str = input("Hány kérdést kérsz összesen? [12]: ").strip()
         n = int(n_str) if n_str else 12
-        kerd, _qa = valassz_forras_es_kerdesek(mod=mod, n=n)
+        kerd, _qa, _positions = valassz_forras_es_kerdesek(mod=mod, n=n)
         print("\n--- Kiválasztott kérdések ---")
         for i, q in enumerate(kerd, 1):
             print(f"{i}. {q}")

@@ -63,3 +63,6 @@ webshop.db
 *.html
 *.ttf
 biofizika/DejaVu Fonts License.txt
+
+# Local source material used to build generated Molsejt explanations
+molsejt/sources/
