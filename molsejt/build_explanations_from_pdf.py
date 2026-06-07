@@ -133,6 +133,27 @@ def concise_join(sentences: Iterable[str], max_chars: int = 520) -> str:
     return " ".join(result).strip()
 
 
+def remove_figure_references(text: str) -> str:
+    """Eltávolítja az ábrahivatkozásokat, például: (5.4. ábra), 8.6.A. ábra, 14.2.ábra."""
+    cleaned = text
+    cleaned = re.sub(
+        r"\s*\([^)]*\b\d+(?:\.\d+)*(?:\.[A-Z])?\.\s*ábra\b[^)]*\)",
+        "",
+        cleaned,
+        flags=re.IGNORECASE,
+    )
+    cleaned = re.sub(
+        r"\s*\b\d+(?:\.\d+)*(?:\.[A-Z])?\.\s*ábra\b\s*:?,?",
+        "",
+        cleaned,
+        flags=re.IGNORECASE,
+    )
+    cleaned = re.sub(r"\s+([,.;:])", r"\1", cleaned)
+    cleaned = re.sub(r"\(\s*\)", "", cleaned)
+    cleaned = re.sub(r"\s{2,}", " ", cleaned)
+    return cleaned.strip()
+
+
 def fallback_explanation(answers: List[str], question: str) -> str:
     terms = answer_terms(answers)
     if terms:
@@ -157,8 +178,8 @@ def build_explanation(question: str, answers: List[str], sentences: List[str], s
     best_score = scored[0][0] if scored else 0
     explanation = concise_join(sentence for _, _, sentence in scored[:8])
     if explanation and best_score >= 6:
-        return explanation
-    return fallback_explanation(answers, question)
+        return remove_figure_references(explanation)
+    return remove_figure_references(fallback_explanation(answers, question))
 
 
 def load_all_questions() -> Dict[str, List[str]]:
