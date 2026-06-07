@@ -97,6 +97,8 @@ if "positions_by_mode" not in st.session_state:
         "2": {"start_index_1": 0, "start_index_2": 0},
         "szigorlat": {"start_index_1": 0, "start_index_2": 0},
     }
+if "active_mod" not in st.session_state:
+    st.session_state.active_mod = mod
 
 
 @st.cache_data(show_spinner=False)
@@ -127,6 +129,36 @@ def current_positions() -> Dict[str, int]:
     return st.session_state.positions_by_mode.setdefault(
         mod, {"start_index_1": 0, "start_index_2": 0}
     )
+
+
+def reset_positions_for_mode(mode: str) -> None:
+    """Visszaállítja az adott vizsgatípushoz tartozó sorrendi kérdésszámlálót az elejére."""
+    st.session_state.positions_by_mode.setdefault(
+        mode, {"start_index_1": 0, "start_index_2": 0}
+    )
+    if mode == "1":
+        st.session_state.positions_by_mode[mode]["start_index_1"] = 0
+    elif mode == "2":
+        st.session_state.positions_by_mode[mode]["start_index_2"] = 0
+    else:
+        st.session_state.positions_by_mode[mode] = {"start_index_1": 0, "start_index_2": 0}
+
+
+def sync_sidebar_loading_state() -> None:
+    """A sidebar választását tekinti egyedüli forrásnak, és szükség esetén reseteli a sorrendi számlálót."""
+    loading_mode_changed = st.session_state.loading_mode != sidebar_loading_mode
+    mod_changed = st.session_state.active_mod != mod
+
+    if loading_mode_changed:
+        st.session_state.loading_mode = sidebar_loading_mode
+        if sidebar_loading_mode == "next":
+            reset_positions_for_mode(mod)
+        st.session_state.kerdesek = []
+    elif mod_changed and sidebar_loading_mode == "next":
+        reset_positions_for_mode(mod)
+        st.session_state.kerdesek = []
+
+    st.session_state.active_mod = mod
 
 
 def generalj(selection_mode: Optional[str] = None) -> None:
@@ -175,10 +207,11 @@ def generalj(selection_mode: Optional[str] = None) -> None:
         st.session_state.source_key = current_source_key()
 
 
-# Első betöltéskor, gombnyomásra vagy vizsgatípus/CSV-változáskor töltsünk újra
+# Első betöltéskor, gombnyomásra, vizsgatípus/CSV-változáskor vagy sidebar-módváltáskor töltsünk újra
+sync_sidebar_loading_state()
 source_key = current_source_key()
 if start:
-    generalj(sidebar_loading_mode)
+    generalj(st.session_state.loading_mode)
 elif not st.session_state.kerdesek or st.session_state.source_key != source_key:
     generalj(st.session_state.loading_mode)
 
@@ -214,15 +247,9 @@ with c2:
 with c3:
     st.metric("Helyesnek jelölt", helyes_db)
 with c4:
-    main_loading_mode = st.selectbox(
-        "Következő betöltés módja",
-        options=["next", "random"],
-        format_func=lambda x: QUESTION_LOADING_LABELS[x],
-        index=["next", "random"].index(st.session_state.loading_mode),
-        key="main_loading_mode_select",
-    )
-    if st.button("🔁 Kérdések betöltése", use_container_width=True):
-        generalj(main_loading_mode)
+    st.caption(f"Újragenerálás módja: **{QUESTION_LOADING_LABELS[st.session_state.loading_mode]}**")
+    if st.button("🔁 Kérdések újragenerálása", use_container_width=True):
+        generalj(st.session_state.loading_mode)
         st.rerun()
 
 st.divider()
