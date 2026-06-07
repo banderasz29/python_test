@@ -20,7 +20,8 @@ THRESHOLD: int = 12  # ennyi kérdés töltődik be minden módban
 PASS_MIN: int = 9  # legalább ennyi helyes kell a sikerhez (12-ből 9)
 FAJL_1: Path = APP_DIR / "kerdes_valaszok.csv"  # 1. félév
 FAJL_2: Path = APP_DIR / "kerdes_valaszok2.csv"  # 2. félév
-SEED: Optional[int] = None  # kompatibilitási okból megmaradt; sorrendi módban nincs hatása
+EXPLANATIONS_FILE: Path = APP_DIR / "answer_explanations.json"
+SEED: Optional[int] = None  # None esetén a véletlen mód minden kattintásra új mintát ad
 
 st.set_page_config(
     page_title="Molekuláris sejtbiológia – minimum kérdések teszt",
@@ -28,19 +29,34 @@ st.set_page_config(
     layout="wide",
 )
 
-# Oldalsáv – csak vizsgatípus + betöltés
+MODE_LABELS = {
+    "1": "1. félév",
+    "2": "2. félév",
+    "szigorlat": "3. szigorlat (50–50%)",
+}
+
+QUESTION_LOADING_LABELS = {
+    "next": "Következő 12 kérdés",
+    "random": "Véletlen sorrend",
+}
+
+# Oldalsáv – vizsgatípus + kezdeti betöltés
 st.sidebar.header("Beállítás")
 mod = st.sidebar.selectbox(
     "Vizsga típusa",
     options=["1", "2", "szigorlat"],
-    format_func=lambda x: {
-        "1": "1. félév",
-        "2": "2. félév",
-        "szigorlat": "3. szigorlat (50–50%)",
-    }[x],
+    format_func=lambda x: MODE_LABELS[x],
 )
-start = st.sidebar.button("🎯 Betöltés / újrakezdés")
-st.sidebar.caption("A kérdések nem véletlenszerűen, hanem a CSV-fájlok eredeti sorrendjében jelennek meg.")
+sidebar_loading_mode = st.sidebar.selectbox(
+    "Kérdésbetöltés",
+    options=["next", "random"],
+    format_func=lambda x: QUESTION_LOADING_LABELS[x],
+    help="A következő 12 kérdés mód sorban halad az adott vizsgatípus kérdésbankjában; a véletlen mód új, random 12 kérdést választ.",
+)
+start = st.sidebar.button("🎯 Kérdések betöltése")
+st.sidebar.caption(
+    "Választható a véletlen kérdésbetöltés vagy a soron következő 12 kérdés megjelenítése."
+)
 
 # Diagnosztika – lásd, honnan fut és mit lát
 with st.sidebar.expander("Diagnosztika", expanded=False):
@@ -49,12 +65,14 @@ with st.sidebar.expander("Diagnosztika", expanded=False):
     st.write(f"**APP_DIR**: {APP_DIR}")
     st.write(f"**{FAJL_1.name}** exists? {FAJL_1.exists()}")
     st.write(f"**{FAJL_2.name}** exists? {FAJL_2.exists()}")
+    st.write(f"**{EXPLANATIONS_FILE.name}** exists? {EXPLANATIONS_FILE.exists()}")
 
 # Rövid összegzés a fájlokról
 st.sidebar.caption(f"📂 Aktív app-könyvtár: `{APP_DIR}`")
 st.sidebar.write(
     f"- 1. félév: `{FAJL_1.name}` — **{'OK' if FAJL_1.exists() else 'HIÁNYZIK'}**\n"
-    f"- 2. félév: `{FAJL_2.name}` — **{'OK' if FAJL_2.exists() else 'HIÁNYZIK'}**"
+    f"- 2. félév: `{FAJL_2.name}` — **{'OK' if FAJL_2.exists() else 'HIÁNYZIK'}**\n"
+    f"- Magyarázatok: `{EXPLANATIONS_FILE.name}` — **{'OK' if EXPLANATIONS_FILE.exists() else 'HIÁNYZIK'}**"
 )
 
 # ─────────────────────────────────────────────────────────
@@ -71,25 +89,47 @@ if "osszegzes" not in st.session_state:
     st.session_state.osszegzes = None  # Optional[Dict[str, object]]
 if "source_key" not in st.session_state:
     st.session_state.source_key = None
+if "loading_mode" not in st.session_state:
+    st.session_state.loading_mode = sidebar_loading_mode
+if "positions_by_mode" not in st.session_state:
+    st.session_state.positions_by_mode = {
+        "1": {"start_index_1": 0, "start_index_2": 0},
+        "2": {"start_index_1": 0, "start_index_2": 0},
+        "szigorlat": {"start_index_1": 0, "start_index_2": 0},
+    }
+
+
+@st.cache_data(show_spinner=False)
+def load_explanations(path: Path) -> Dict[str, str]:
+    if not path.exists():
+        return {}
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except Exception:
+        return {}
+    return {str(k): str(v).strip() for k, v in data.items() if str(v).strip()}
+
+
+EXPLANATIONS = load_explanations(EXPLANATIONS_FILE)
 
 
 # ─────────────────────────────────────────────────────────
 # Betöltés
-MODE_LABELS = {
-    "1": "1. félév",
-    "2": "2. félév",
-    "szigorlat": "3. szigorlat (50–50%)",
-}
-
-
 def current_source_key() -> str:
-    """A beállításokból és CSV-időbélyegekből stabil kulcsot képez az automatikus újratöltéshez."""
+    """A vizsgatípusból és fájl-időbélyegekből stabil kulcsot képez az automatikus újratöltéshez."""
     fajl_1_mtime = FAJL_1.stat().st_mtime if FAJL_1.exists() else "missing"
     fajl_2_mtime = FAJL_2.stat().st_mtime if FAJL_2.exists() else "missing"
-    return f"{mod}|{THRESHOLD}|{fajl_1_mtime}|{fajl_2_mtime}"
+    explanations_mtime = EXPLANATIONS_FILE.stat().st_mtime if EXPLANATIONS_FILE.exists() else "missing"
+    return f"{mod}|{THRESHOLD}|{fajl_1_mtime}|{fajl_2_mtime}|{explanations_mtime}"
 
 
-def generalj() -> None:
+def current_positions() -> Dict[str, int]:
+    return st.session_state.positions_by_mode.setdefault(
+        mod, {"start_index_1": 0, "start_index_2": 0}
+    )
+
+
+def generalj(selection_mode: Optional[str] = None) -> None:
     # Előzetes ellenőrzés – egyértelmű üzenet a hiányzó fájlokra
     missing = []
     if mod in ("1", "szigorlat") and not FAJL_1.exists():
@@ -103,18 +143,30 @@ def generalj() -> None:
             + "\n\nTedd a fájl(oka)t az app.py mellé, vagy adj meg másik elérési utat a kódban."
         )
         st.stop()
-        return  # extra védelem
+        return
+
+    loading_mode = selection_mode or st.session_state.loading_mode
+    positions = current_positions()
 
     try:
-        kerdesek, qa = valassz_forras_es_kerdesek(
-            mod=mod, n=THRESHOLD, fajl_1=str(FAJL_1), fajl_2=str(FAJL_2), seed=SEED
+        kerdesek, qa, next_positions = valassz_forras_es_kerdesek(
+            mod=mod,
+            n=THRESHOLD,
+            fajl_1=str(FAJL_1),
+            fajl_2=str(FAJL_2),
+            seed=SEED,
+            selection_mode=loading_mode,
+            start_index_1=int(positions.get("start_index_1", 0)),
+            start_index_2=int(positions.get("start_index_2", 0)),
         )
     except Exception as e:
         st.error(f"Hiba a kérdések előkészítése során: {e}")
         st.stop()
         return
     else:
-        # Csak sikeres beolvasás után állítsunk állapotot
+        if loading_mode == "next":
+            st.session_state.positions_by_mode[mod] = next_positions
+        st.session_state.loading_mode = loading_mode
         st.session_state.kerdesek = kerdesek
         st.session_state.qa = qa
         st.session_state.show_answer = {k: False for k in kerdesek}
@@ -125,8 +177,10 @@ def generalj() -> None:
 
 # Első betöltéskor, gombnyomásra vagy vizsgatípus/CSV-változáskor töltsünk újra
 source_key = current_source_key()
-if start or not st.session_state.kerdesek or st.session_state.source_key != source_key:
-    generalj()
+if start:
+    generalj(sidebar_loading_mode)
+elif not st.session_state.kerdesek or st.session_state.source_key != source_key:
+    generalj(st.session_state.loading_mode)
 
 # ─────────────────────────────────────────────────────────
 # Fejléc és státusz
@@ -134,13 +188,13 @@ st.title("🧬 Molekuláris sejtbiológia – minimum kérdések teszt")
 st.caption(
     f"Egyszerre látszik minden kérdés. Mód: **{MODE_LABELS[mod]}** • "
     f"Kérdések száma: **{THRESHOLD}** • Sikeresség feltétele: **legalább {PASS_MIN} helyes**. "
-    "A kérdések a forrásfájlok eredeti sorrendjét követik."
+    f"Aktuális kérdésbetöltés: **{QUESTION_LOADING_LABELS[st.session_state.loading_mode]}**."
 )
 
 # Ha valamiért még sincs kérdés (pl. stop után), álljunk meg szépen
 if not st.session_state.kerdesek:
     st.info(
-        "Nincs betölthető kérdés. Ellenőrizd a CSV fájlokat, majd kattints a Betöltés gombra."
+        "Nincs betölthető kérdés. Ellenőrizd a CSV fájlokat, majd kattints a Kérdések betöltése gombra."
     )
     st.stop()
 
@@ -160,11 +214,16 @@ with c2:
 with c3:
     st.metric("Helyesnek jelölt", helyes_db)
 with c4:
-    st.button(
-        "🔁 Újrakezdés azonos sorrenddel",
-        on_click=generalj,
-        use_container_width=True,
+    main_loading_mode = st.selectbox(
+        "Következő betöltés módja",
+        options=["next", "random"],
+        format_func=lambda x: QUESTION_LOADING_LABELS[x],
+        index=["next", "random"].index(st.session_state.loading_mode),
+        key="main_loading_mode_select",
     )
+    if st.button("🔁 Kérdések betöltése", use_container_width=True):
+        generalj(main_loading_mode)
+        st.rerun()
 
 st.divider()
 
@@ -190,27 +249,14 @@ def compact_answer_text(ans_list: List[str]) -> str:
 
 
 def short_explanation(question: str, ans_list: List[str]) -> str:
-    """Rövid, tanulást segítő magyarázatot készít a rendelkezésre álló válaszokból."""
-    cleaned = [re.sub(r"\s+", " ", str(a)).strip(" ;") for a in ans_list if str(a).strip()]
-    if not cleaned:
-        return "Ehhez a kérdéshez nincs külön magyarázat rögzítve, ezért a tanulásnál a kérdés megfogalmazásából indulj ki."
-
-    if len(cleaned) == 1:
-        answer_summary = cleaned[0]
-        return (
-            f"A válasz lényege: {answer_summary}. Tanuláskor ezt a kulcsállítást kapcsold össze "
-            "a kérdésben szereplő fogalommal, mert a minimumkérdések általában a pontos definíciót, "
-            "helyet, funkciót vagy fő példát kérik számon."
-        )
-
-    answer_summary = "; ".join(cleaned[:3])
-    if len(cleaned) > 3:
-        answer_summary += "; …"
-    return (
-        f"A felsorolt elemek a válasz kulcspontjai: {answer_summary}. A kérdés megoldásához elég, ha "
-        "a fő fogalmakat és azok kapcsolatát jegyzed meg; több elfogadható válasz esetén ezek gyakran "
-        "alternatív példák vagy egymást kiegészítő részletek."
-    )
+    """A válaszhoz tartozó, előre előkészített fogalmi magyarázatot adja vissza."""
+    explanation = EXPLANATIONS.get(question, "").strip()
+    if explanation:
+        return explanation
+    answer_summary = compact_answer_text(ans_list)
+    if answer_summary:
+        return f"{answer_summary}: a kérdéshez tartozó elfogadható válasz. Ehhez a fogalomhoz nincs külön forrásszövegből előkészített rövid leírás."
+    return "Ehhez a kérdéshez nincs külön magyarázat rögzítve."
 
 
 def show_explanation(question: str, ans_list: List[str]) -> None:
@@ -293,7 +339,7 @@ if st.session_state.osszegzes is not None:
     export = {
         "kor_id": "session",
         "mod": MODE_LABELS[mod],
-        "sorrend": "CSV eredeti sorrendje",
+        "kerdesbetoltes": QUESTION_LOADING_LABELS[st.session_state.loading_mode],
         "kerdesek_szama": len(kerdesek),
         "minimum_helyes": PASS_MIN,
         "helyes_db": helyes,
@@ -319,13 +365,13 @@ if st.session_state.osszegzes is not None:
 # CSV export
 buf = io.StringIO()
 w = csv.writer(buf)
-w.writerow(["index", "question", "mark", "answers", "explanation"])
+w.writerow(["index", "question", "mark", "answers", "explanation", "question_loading"])
 for i, kk in enumerate(kerdesek, 1):
     mark = itel.get(kk)
     mark_str = "" if mark is None else ("correct" if mark == "helyes" else "wrong")
     answers = qa.get(kk, [])
     joined = " | ".join(str(a).replace("\n", " ") for a in answers)
-    w.writerow([i, kk, mark_str, joined, short_explanation(kk, answers)])
+    w.writerow([i, kk, mark_str, joined, short_explanation(kk, answers), QUESTION_LOADING_LABELS[st.session_state.loading_mode]])
 st.download_button(
     label="⬇️ Eredmények letöltése (CSV)",
     data=buf.getvalue(),
