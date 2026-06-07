@@ -9,7 +9,7 @@ import re
 import streamlit as st
 
 # Kérdésválogatás és CSV beolvasás – győződj meg róla, hogy qa_utils.py ugyanebben a mappában van.
-from qa_utils import valassz_forras_es_kerdesek
+from qa_utils_v2 import valassz_forras_es_kerdesek
 
 # ─────────────────────────────────────────────────────────
 # Mindig az app fájlja MELLŐL dolgozunk, függetlenül a CWD-től
